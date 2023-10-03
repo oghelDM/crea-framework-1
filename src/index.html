@@ -21,11 +21,8 @@
       }
       #videoId {
         position: absolute;
-        width: 80%;
-        aspect-ratio: 16 / 9;
-        margin-top: 50px;
-        margin-left: 10%;
-        height: unset;
+        width: 100%;
+        height: 100%;
       }
     </style>
     <script>
@@ -42,12 +39,25 @@
         const desiredBitrate = 'desiredBitrate';
         const creativeData = {};
         const environmentVars = { slot, videoSlot };
+        ad.handshakeVersion('');
         ad.initAd(width, height, viewMode, desiredBitrate, creativeData, environmentVars);
+        // TODO: should we explicitly subscribe to these events?
+        [
+          { event: 'AdImpression', value: 0 },
+          { event: 'AdVideoStart', value: 0 },
+          { event: 'AdVideoFirstQuartile', value: 25 },
+          { event: 'AdVideoMidpoint', value: 50 },
+          { event: 'AdVideoThirdQuartile', value: 75 },
+          { event: 'AdVideoComplete', value: 100 }
+        ].forEach(({ event }) => ad.subscribe(() => console.log(`video quartile event: ${event}`), event));
+        ad.startAd();
       }, 1000);
     </script>
-    <video controls id="videoId">
-      <source src="https://statics.dmcdn.net/d/vpaid/split/assets/video_mid.mp4" type="video/mp4" />
-    </video>
-    <div id="appId"></div>
+
+    <div id="appId">
+      <video muted controls id="videoId">
+        <source src="https://statics.dmcdn.net/d/vpaid/split/assets/video_mid.mp4" type="video/mp4" />
+      </video>
+    </div>
   </body>
 </html>

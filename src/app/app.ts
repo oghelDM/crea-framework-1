@@ -1,13 +1,14 @@
 import { Creative } from './creative';
 import { quartileEvents } from '../constants';
-import { mobileCheck, updateDisplay } from '../utils';
+import { createDiv } from '../utils/divMaker';
+import { mobileCheck, updateDisplay } from '../utils/helper';
 
 (window as any).getVPAIDAd = () => {
   console.log('getVPAIDAd');
-  return new VPAIDVidePlayer();
+  return new VPAIDVideoPlayer();
 };
 
-class VPAIDVidePlayer {
+class VPAIDVideoPlayer {
   attributes: any = {}; // TODO: strongly type
   slot: HTMLElement;
   videoSlot: HTMLVideoElement;
@@ -24,128 +25,6 @@ class VPAIDVidePlayer {
   constructor() {
     console.log('VPAID constructor');
   }
-
-  /**
-   * Returns the supported VPAID version.
-   * @param {string} version
-   * @return {string}
-   */
-  handshakeVersion = (_) => '2.0';
-
-  /**
-   * Initializes all attributes in the ad. The ad will not start until startAd is called.
-   * @param {number} width The ad width.
-   * @param {number} height The ad height.
-   * @param {string} viewMode The ad view mode.
-   * @param {number} desiredBitrate The chosen bitrate.
-   * @param {Object} creativeData Data associated with the creative.
-   * @param {Object} environmentVars Runtime variables associated with the creative like the slot and video slot.
-   */
-  initAd = (width, height, viewMode, desiredBitrate, creativeData, environmentVars) => {
-    console.log('initAd');
-    // TODO: do we need to keep this attributes?
-    this.attributes['width'] = width;
-    this.attributes['height'] = height;
-    this.attributes['viewMode'] = viewMode;
-    this.attributes['desiredBitrate'] = desiredBitrate;
-
-    const creativeWrapper = document.createElement('div');
-    creativeWrapper.id = 'creativeWrapper';
-    creativeWrapper.style.position = 'absolute';
-    creativeWrapper.style.display = 'flex';
-    creativeWrapper.style.flexDirection = 'column';
-    creativeWrapper.style.justifyContent = 'center';
-    creativeWrapper.style.width = '100%';
-    creativeWrapper.style.height = '100%';
-    this.creativeWrapper = creativeWrapper;
-
-    const creativeContent = document.createElement('div');
-    creativeContent.id = 'creativeContent';
-    creativeContent.style.position = 'relative';
-    creativeContent.style.overflow = 'hidden';
-    creativeContent.style.aspectRatio = '16 / 9';
-    creativeContent.style.margin = 'auto';
-    this.creativeContent = creativeContent;
-    updateDisplay(creativeContent);
-
-    // slot and videoSlot are passed as part of the environmentVars
-    this.slot = environmentVars.slot;
-    this.videoSlot = environmentVars.videoSlot;
-
-    creativeWrapper.appendChild(creativeContent);
-    this.slot.appendChild(creativeWrapper);
-
-    this.updateVideoSlot();
-    this.videoSlot.addEventListener('timeupdate', () => this.timeUpdateHandler());
-    this.videoSlot.addEventListener('loadedmetadata', () => this.loadedMetadata());
-    this.videoSlot.addEventListener('ended', () => this.stopAd());
-    this.slot.addEventListener('click', () => this.clickAd());
-
-    /////////////////
-    this.creative = new Creative(this.creativeContent);
-    /////////////////
-
-    // expected VPAID callback
-    this.callEvent('AdLoaded');
-  };
-
-  callEvent = (eventName) => {
-    if (eventName in this.eventsCallbacks) {
-      this.eventsCallbacks[eventName]();
-    }
-  };
-
-  /**
-   * Called when the ad is clicked.
-   * @private
-   */
-  clickAd = () => {
-    let url = 'https://www.dailymotion.com/fr';
-
-    if ('AdClickThru' in this.eventsCallbacks) {
-      this.eventsCallbacks['AdClickThru'](url, '0', true);
-    }
-  };
-
-  clickAdCustom = (productUrl, productName, clientTracking) => {
-    let url = productUrl;
-    // trackPixel(clientTracking);
-
-    if ('AdClickThru' in this.eventsCallbacks) {
-      this.eventsCallbacks['AdClickThru'](url, '0', true);
-    }
-  };
-
-  /**
-   * Called by the video element when video metadata is loaded.
-   * @private
-   */
-  loadedMetadata = () => {
-    // The ad duration is not known until the media metadata is loaded.
-    // Then, update the player with the duration change.
-    this.attributes['duration'] = this.videoSlot.duration;
-    this.callEvent('AdDurationChange');
-  };
-
-  /**
-   * Called by the video element when the video reaches specific points during
-   * playback.
-   * @private
-   */
-  timeUpdateHandler = () => {
-    if (this.nextQuartileIndex >= quartileEvents.length) {
-      return;
-    }
-    var percentPlayed = (this.videoSlot.currentTime * 100.0) / this.videoSlot.duration;
-    if (percentPlayed >= quartileEvents[this.nextQuartileIndex].value) {
-      var lastQuartileEvent = quartileEvents[this.nextQuartileIndex].event;
-      this.eventsCallbacks[lastQuartileEvent]();
-      this.nextQuartileIndex += 1;
-    }
-    if (this.videoSlot.duration > 0) {
-      this.attributes['remainingTime'] = this.videoSlot.duration - this.videoSlot.currentTime;
-    }
-  };
 
   /**
    * Creates or updates the video slot and fills it with a supported video.
@@ -204,7 +83,6 @@ class VPAIDVidePlayer {
     this.creativeWrapper.style.justifyContent = 'center';
     this.creativeWrapper.style.width = '100%';
     this.creativeWrapper.style.height = '100%';
-    // this.creativeWrapper.style.backgroundColor = "white";
 
     this.creativeContent = document.createElement('div');
     this.creativeContent.style.position = 'relative';
@@ -218,7 +96,6 @@ class VPAIDVidePlayer {
     splitView.style.width = '100%';
     splitView.style.height = '100%';
     splitView.style.overflow = 'hidden';
-    // splitView.style.backgroundColor = "red";
 
     const bg_bottom = document.createElement('div');
     bg_bottom.style.position = 'absolute';
@@ -231,7 +108,6 @@ class VPAIDVidePlayer {
     bg_bottom.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_1.png")`;
     bg_bottom.style.overflow = 'hidden';
     bg_bottom.style.zIndex = '1';
-    // bg_bottom.style.backgroundColor = "blue";
 
     const bg_top = document.createElement('div');
     bg_top.style.position = 'absolute';
@@ -245,21 +121,6 @@ class VPAIDVidePlayer {
     bg_top.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_2.png")`;
     bg_top.style.overflow = 'hidden';
     bg_top.style.zIndex = '2';
-    // bg_top.style.backgroundColor = "red";
-
-    // const bg_top_img = document.createElement("div");
-    // bg_top_img.style.position = "absolute";
-    // bg_top_img.style.right = "0%";
-    // bg_top_img.style.width = "200px";
-    // bg_top_img.style.height = "200px";
-    // bg_top_img.style.backgroundPosition = "right";
-    // bg_top_img.style.backgroundRepeat = "no-repeat";
-    // bg_top_img.style.initial = "no-repeat";
-    // bg_top_img.style.backgroundSize = "80% 100%";
-    // bg_top_img.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_2.png")`;
-    // bg_top_img.style.overflow = "hidden";
-    // bg_top_img.style.zIndex = 2;
-    // bg_top_img.style.backgroundColor = "red";
 
     const handle = document.createElement('div');
     handle.style.position = 'absolute';
@@ -304,6 +165,138 @@ class VPAIDVidePlayer {
         // Adjust the top panel width.
         bg_top.style.width = creativeWidth - evt.clientX + 'px';
       });
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////// VPAID INTERFACE /////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+
+  /**
+   * Returns the supported VPAID version.
+   * @param {string} playerVPAIDVersion
+   * @return {string}
+   */
+  handshakeVersion = (_) => '2.0';
+
+  /**
+   * Initializes all attributes in the ad. The ad will not start until startAd is called.
+   * @param {number} width The ad width.
+   * @param {number} height The ad height.
+   * @param {string} viewMode The ad view mode.
+   * @param {number} desiredBitrate The chosen bitrate.
+   * @param {Object} creativeData Data associated with the creative.
+   * @param {Object} environmentVars Runtime variables associated with the creative like the slot and video slot.
+   */
+  initAd = (width, height, viewMode, desiredBitrate, creativeData, environmentVars) => {
+    console.log('initAd');
+    // TODO: do we need to keep this attributes?
+    this.attributes['width'] = width;
+    this.attributes['height'] = height;
+    this.attributes['viewMode'] = viewMode;
+    this.attributes['desiredBitrate'] = desiredBitrate;
+
+    this.creativeWrapper = createDiv('creativeWrapper', {
+      position: 'absolute',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%'
+    });
+
+    this.creativeContent = createDiv('creativeContent', {
+      position: 'relative',
+      overflow: 'hidden',
+      aspectRatio: '16 / 9',
+      margin: 'auto'
+    });
+    updateDisplay(this.creativeContent);
+
+    // slot and videoSlot are passed as part of the environmentVars
+    this.slot = environmentVars.slot;
+    this.videoSlot = environmentVars.videoSlot;
+
+    this.creativeWrapper.appendChild(this.creativeContent);
+    this.slot.appendChild(this.creativeWrapper);
+
+    this.updateVideoSlot();
+    this.videoSlot.addEventListener('timeupdate', () => this.timeUpdateHandler());
+    this.videoSlot.addEventListener('loadedmetadata', () => this.loadedMetadata());
+    this.videoSlot.addEventListener('ended', () => this.stopAd());
+    this.slot.addEventListener('click', () => this.clickAd());
+
+    ////////////////////////////////////////////////////////////////////
+    ///////////////////// DM ad instanciation //////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    this.creative = new Creative(this.creativeContent);
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+
+    // expected VPAID callback
+    this.callEvent('AdLoaded');
+  };
+
+  callEvent = (eventName) => {
+    if (eventName in this.eventsCallbacks) {
+      this.eventsCallbacks[eventName]();
+    }
+  };
+
+  /**
+   * Called when the ad is clicked.
+   * @private
+   */
+  clickAd = () => {
+    let url = 'https://www.dailymotion.com/fr';
+
+    if ('AdClickThru' in this.eventsCallbacks) {
+      this.eventsCallbacks['AdClickThru'](url, '0', true);
+    }
+  };
+
+  clickAdCustom = (productUrl, productName, clientTracking) => {
+    let url = productUrl;
+    // trackPixel(clientTracking);
+
+    if ('AdClickThru' in this.eventsCallbacks) {
+      this.eventsCallbacks['AdClickThru'](url, '0', true);
+    }
+  };
+
+  /**
+   * Called by the video element when video metadata is loaded.
+   * @private
+   */
+  loadedMetadata = () => {
+    // The ad duration is not known until the media metadata is loaded.
+    // Then, update the player with the duration change.
+    this.attributes['duration'] = this.videoSlot.duration;
+    this.callEvent('AdDurationChange');
+  };
+
+  /**
+   * Called by the video element when the video reaches specific points during
+   * playback.
+   * @private
+   */
+  timeUpdateHandler = () => {
+    if (this.nextQuartileIndex >= quartileEvents.length) {
+      return;
+    }
+    const percentPlayed = (this.videoSlot.currentTime * 100.0) / this.videoSlot.duration;
+    if (percentPlayed >= quartileEvents[this.nextQuartileIndex].value) {
+      const lastQuartileEvent = quartileEvents[this.nextQuartileIndex].event;
+      this.nextQuartileIndex += 1;
+      this.eventsCallbacks[lastQuartileEvent] && this.eventsCallbacks[lastQuartileEvent]();
+    }
+    if (this.videoSlot.duration > 0) {
+      this.attributes['remainingTime'] = this.videoSlot.duration - this.videoSlot.currentTime;
     }
   };
 

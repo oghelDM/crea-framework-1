@@ -14,9 +14,9 @@ export const mobileCheck = (): boolean => {
 // check device orientation
 const isScreenPortrait = (): boolean => window.matchMedia('(orientation: portrait)').matches;
 
-// update a dom element display depending on device and orientation
+// update a DOM element display depending on device and orientation
 export const updateDisplay = (domElement): void => {
-  console.log('updateDisplay: ', domElement);
+  console.log('updateDisplay element: ', domElement);
   const isLandscape = isScreenPortrait();
   const isMobile = mobileCheck();
 
