@@ -1,0 +1,499 @@
+import { Creative } from './creative';
+import { quartileEvents } from '../constants';
+import { mobileCheck, updateDisplay } from '../utils';
+
+(window as any).getVPAIDAd = () => {
+  console.log('getVPAIDAd');
+  return new VPAIDVidePlayer();
+};
+
+class VPAIDVidePlayer {
+  attributes: any = {}; // TODO: strongly type
+  slot: HTMLElement;
+  videoSlot: HTMLVideoElement;
+  eventsCallbacks: any = {}; // TODO: strongly type
+  creative: Creative;
+
+  // TODO: clean this up
+  nextQuartileIndex = 0;
+  // A creativeWrapper to keep the creative content centered
+  creativeWrapper = null;
+  // A container dedicated to the displayed elements
+  creativeContent = null;
+
+  constructor() {
+    console.log('VPAID constructor');
+  }
+
+  /**
+   * Returns the supported VPAID version.
+   * @param {string} version
+   * @return {string}
+   */
+  handshakeVersion = (_) => '2.0';
+
+  /**
+   * Initializes all attributes in the ad. The ad will not start until startAd is called.
+   * @param {number} width The ad width.
+   * @param {number} height The ad height.
+   * @param {string} viewMode The ad view mode.
+   * @param {number} desiredBitrate The chosen bitrate.
+   * @param {Object} creativeData Data associated with the creative.
+   * @param {Object} environmentVars Runtime variables associated with the creative like the slot and video slot.
+   */
+  initAd = (width, height, viewMode, desiredBitrate, creativeData, environmentVars) => {
+    console.log('initAd');
+    // TODO: do we need to keep this attributes?
+    this.attributes['width'] = width;
+    this.attributes['height'] = height;
+    this.attributes['viewMode'] = viewMode;
+    this.attributes['desiredBitrate'] = desiredBitrate;
+
+    const creativeWrapper = document.createElement('div');
+    creativeWrapper.id = 'creativeWrapper';
+    creativeWrapper.style.position = 'absolute';
+    creativeWrapper.style.display = 'flex';
+    creativeWrapper.style.flexDirection = 'column';
+    creativeWrapper.style.justifyContent = 'center';
+    creativeWrapper.style.width = '100%';
+    creativeWrapper.style.height = '100%';
+    this.creativeWrapper = creativeWrapper;
+
+    const creativeContent = document.createElement('div');
+    creativeContent.id = 'creativeContent';
+    creativeContent.style.position = 'relative';
+    creativeContent.style.overflow = 'hidden';
+    creativeContent.style.aspectRatio = '16 / 9';
+    creativeContent.style.margin = 'auto';
+    this.creativeContent = creativeContent;
+    updateDisplay(creativeContent);
+
+    // slot and videoSlot are passed as part of the environmentVars
+    this.slot = environmentVars.slot;
+    this.videoSlot = environmentVars.videoSlot;
+
+    creativeWrapper.appendChild(creativeContent);
+    this.slot.appendChild(creativeWrapper);
+
+    this.updateVideoSlot();
+    this.videoSlot.addEventListener('timeupdate', () => this.timeUpdateHandler());
+    this.videoSlot.addEventListener('loadedmetadata', () => this.loadedMetadata());
+    this.videoSlot.addEventListener('ended', () => this.stopAd());
+    this.slot.addEventListener('click', () => this.clickAd());
+
+    /////////////////
+    this.creative = new Creative(this.creativeContent);
+    /////////////////
+
+    // expected VPAID callback
+    this.callEvent('AdLoaded');
+  };
+
+  callEvent = (eventName) => {
+    if (eventName in this.eventsCallbacks) {
+      this.eventsCallbacks[eventName]();
+    }
+  };
+
+  /**
+   * Called when the ad is clicked.
+   * @private
+   */
+  clickAd = () => {
+    let url = 'https://www.dailymotion.com/fr';
+
+    if ('AdClickThru' in this.eventsCallbacks) {
+      this.eventsCallbacks['AdClickThru'](url, '0', true);
+    }
+  };
+
+  clickAdCustom = (productUrl, productName, clientTracking) => {
+    let url = productUrl;
+    // trackPixel(clientTracking);
+
+    if ('AdClickThru' in this.eventsCallbacks) {
+      this.eventsCallbacks['AdClickThru'](url, '0', true);
+    }
+  };
+
+  /**
+   * Called by the video element when video metadata is loaded.
+   * @private
+   */
+  loadedMetadata = () => {
+    // The ad duration is not known until the media metadata is loaded.
+    // Then, update the player with the duration change.
+    this.attributes['duration'] = this.videoSlot.duration;
+    this.callEvent('AdDurationChange');
+  };
+
+  /**
+   * Called by the video element when the video reaches specific points during
+   * playback.
+   * @private
+   */
+  timeUpdateHandler = () => {
+    if (this.nextQuartileIndex >= quartileEvents.length) {
+      return;
+    }
+    var percentPlayed = (this.videoSlot.currentTime * 100.0) / this.videoSlot.duration;
+    if (percentPlayed >= quartileEvents[this.nextQuartileIndex].value) {
+      var lastQuartileEvent = quartileEvents[this.nextQuartileIndex].event;
+      this.eventsCallbacks[lastQuartileEvent]();
+      this.nextQuartileIndex += 1;
+    }
+    if (this.videoSlot.duration > 0) {
+      this.attributes['remainingTime'] = this.videoSlot.duration - this.videoSlot.currentTime;
+    }
+  };
+
+  /**
+   * Creates or updates the video slot and fills it with a supported video.
+   * @private
+   */
+  updateVideoSlot = () => {
+    console.log('updateVideoSlot: ', this.videoSlot);
+    if (this.videoSlot == null) {
+      this.videoSlot = document.createElement('video');
+      this.log('Warning: No video element passed to ad, creating element.');
+      this.slot.appendChild(this.videoSlot);
+    }
+    this.updateVideoPlayerSize();
+
+    const videos = [
+      {
+        mimeType: 'video/mp4',
+        width: 853,
+        height: 480,
+        url: 'https://statics.dmcdn.net/d/vpaid/split/assets/video_low.mp4'
+      },
+      {
+        mimeType: 'video/mp4',
+        width: 1280,
+        height: 720,
+        url: 'https://statics.dmcdn.net/d/vpaid/split/assets/video_mid.mp4'
+      },
+      {
+        mimeType: 'video/mp4',
+        width: 1920,
+        height: 1080,
+        url: 'https://statics.dmcdn.net/d/vpaid/split/assets/video_high.mp4'
+      }
+    ];
+
+    // const selectedMedia = pickVideo(videos, this.videoSlot);
+
+    // if (!selectedMedia) {
+    //   // Unable to find a source video.
+    //   console.error('video source was not found : check media mimetype and valid URL');
+    //   this.callEvent('AdError');
+    // } else {
+    //   this.videoSlot.setAttribute('src', selectedMedia.url);
+    // }
+  };
+
+  updateInteractiveSlot = () => {
+    const isMobile = mobileCheck();
+
+    const creativeWidth = window.innerWidth;
+
+    this.creativeWrapper = document.createElement('div');
+    this.creativeWrapper.style.position = 'absolute';
+    this.creativeWrapper.style.display = 'flex';
+    this.creativeWrapper.style.flexDirection = 'column';
+    this.creativeWrapper.style.justifyContent = 'center';
+    this.creativeWrapper.style.width = '100%';
+    this.creativeWrapper.style.height = '100%';
+    // this.creativeWrapper.style.backgroundColor = "white";
+
+    this.creativeContent = document.createElement('div');
+    this.creativeContent.style.position = 'relative';
+    this.creativeContent.style.overflow = 'hidden';
+    this.creativeContent.style.aspectRatio = '16 / 9';
+    this.creativeContent.style.margin = 'auto';
+    updateDisplay(this.creativeContent);
+
+    const splitView = document.createElement('div');
+    splitView.style.position = 'relative';
+    splitView.style.width = '100%';
+    splitView.style.height = '100%';
+    splitView.style.overflow = 'hidden';
+    // splitView.style.backgroundColor = "red";
+
+    const bg_bottom = document.createElement('div');
+    bg_bottom.style.position = 'absolute';
+    bg_bottom.style.width = '100%';
+    bg_bottom.style.height = '100%';
+    bg_bottom.style.backgroundPosition = 'center';
+    bg_bottom.style.backgroundRepeat = 'no-repeat';
+    // bg_bottom.style.initial = 'no-repeat';
+    bg_bottom.style.backgroundSize = 'contain';
+    bg_bottom.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_1.png")`;
+    bg_bottom.style.overflow = 'hidden';
+    bg_bottom.style.zIndex = '1';
+    // bg_bottom.style.backgroundColor = "blue";
+
+    const bg_top = document.createElement('div');
+    bg_top.style.position = 'absolute';
+    bg_top.style.right = '0%';
+    bg_top.style.width = '0%';
+    bg_top.style.height = '100%';
+    bg_top.style.backgroundPosition = 'right';
+    bg_top.style.backgroundRepeat = 'no-repeat';
+    // bg_top.style.initial = 'no-repeat';
+    bg_top.style.backgroundSize = 'cover';
+    bg_top.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_2.png")`;
+    bg_top.style.overflow = 'hidden';
+    bg_top.style.zIndex = '2';
+    // bg_top.style.backgroundColor = "red";
+
+    // const bg_top_img = document.createElement("div");
+    // bg_top_img.style.position = "absolute";
+    // bg_top_img.style.right = "0%";
+    // bg_top_img.style.width = "200px";
+    // bg_top_img.style.height = "200px";
+    // bg_top_img.style.backgroundPosition = "right";
+    // bg_top_img.style.backgroundRepeat = "no-repeat";
+    // bg_top_img.style.initial = "no-repeat";
+    // bg_top_img.style.backgroundSize = "80% 100%";
+    // bg_top_img.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_2.png")`;
+    // bg_top_img.style.overflow = "hidden";
+    // bg_top_img.style.zIndex = 2;
+    // bg_top_img.style.backgroundColor = "red";
+
+    const handle = document.createElement('div');
+    handle.style.position = 'absolute';
+    handle.style.top = '0%';
+    handle.style.height = '100%';
+    handle.style.backgroundPosition = 'center';
+    handle.style.backgroundRepeat = 'no-repeat';
+    // handle.style.initial = 'no-repeat';
+    handle.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/split.png")`;
+    handle.style.zIndex = '5';
+    // handle.style.backgroundColor = "red";
+
+    splitView.appendChild(bg_bottom);
+    // bg_top.appendChild(bg_top_img);
+    splitView.appendChild(bg_top);
+    this.creativeContent.appendChild(splitView);
+    this.creativeContent.appendChild(handle);
+    this.creativeWrapper.appendChild(this.creativeContent);
+    this.slot.appendChild(this.creativeWrapper);
+
+    if (isMobile) {
+      handle.style.width = '15%';
+      handle.style.right = `-${parseFloat(handle.style.width) / 3}%`;
+      handle.style.backgroundSize = '70%';
+
+      handle.addEventListener('touchmove', function (evt) {
+        evt.stopImmediatePropagation();
+        // Move the handle.
+        handle.style.left = evt.targetTouches[0].clientX - handle.clientWidth / 2 + 'px';
+        // Adjust the top panel width.
+        bg_top.style.width = creativeWidth - evt.targetTouches[0].clientX + 'px';
+      });
+    } else {
+      handle.style.width = '5%';
+      handle.style.right = '0%';
+      handle.style.backgroundSize = 'contain';
+
+      splitView.addEventListener('mousemove', function (evt) {
+        evt.stopImmediatePropagation();
+        // Move the handle.
+        handle.style.left = evt.clientX - handle.clientWidth / 2 + 'px';
+        // Adjust the top panel width.
+        bg_top.style.width = creativeWidth - evt.clientX + 'px';
+      });
+    }
+  };
+
+  /**
+   * Helper function to update the size of the video player.
+   * @private
+   */
+  updateVideoPlayerSize = () => {
+    this.videoSlot.setAttribute('width', this.attributes['width']);
+    this.videoSlot.setAttribute('height', this.attributes['height']);
+  };
+
+  /**
+   * Called by the wrapper to start the ad.
+   */
+  startAd = () => {
+    this.log('Starting ad');
+    this.videoSlot.play();
+    // this.updateInteractiveSlot();// TODO
+
+    this.callEvent('AdStarted');
+  };
+
+  /**
+   * Called by the wrapper to stop the ad.
+   */
+  stopAd = () => {
+    // this.log("Stopping ad");
+    // Calling AdStopped immediately terminates the ad. Setting a timeout allows
+    // events to go through.
+    var callback = this.callEvent.bind(this);
+    setTimeout(callback, 75, ['AdStopped']);
+  };
+
+  /**
+   * Called when the video player changes the width/height of the container.
+   * @param {number} width The new width.
+   * @param {number} height A new height.
+   * @param {string} viewMode A new view mode.
+   */
+  resizeAd = (width, height, viewMode) => {
+    // this.log("resizeAd " + width + "x" + height + " " + viewMode);
+    this.attributes['width'] = width;
+    this.attributes['height'] = height;
+    this.attributes['viewMode'] = viewMode;
+    this.updateVideoPlayerSize();
+    updateDisplay(this.creativeContent);
+    this.callEvent('AdSizeChange');
+  };
+
+  /**
+   * Pauses the ad.
+   */
+  pauseAd = () => {
+    // this.log("pauseAd");
+    this.videoSlot.pause();
+    this.callEvent('AdPaused');
+  };
+
+  /**
+   * Resumes the ad.
+   */
+  resumeAd = () => {
+    // this.log("resumeAd");
+    this.videoSlot.play();
+    this.callEvent('AdPlaying');
+  };
+
+  /**
+   * Expands the ad.
+   */
+  expandAd = () => {
+    // this.log("expandAd");
+    this.attributes['expanded'] = true;
+    this.callEvent('AdExpanded');
+  };
+
+  /**
+   * Collapses the ad.
+   */
+  collapseAd = () => (this.attributes['expanded'] = false);
+
+  /**
+   * Skips the ad.
+   */
+  skipAd = () => {
+    this.log('skipAd');
+    var skippableState = this.attributes['skippableState'];
+    if (skippableState) {
+      this.callEvent('AdSkipped');
+    }
+  };
+
+  /**
+   * Registers a callback for an event.
+   * @param {Function} callBack The callback function.
+   * @param {string} eventName The callback type.
+   * @param {Object} aContext The context for the callback.
+   */
+  subscribe = (callBack, eventName, aContext) => {
+    console.log('Subscribe ' + eventName);
+    const bindedCallBack = callBack.bind(aContext);
+    this.eventsCallbacks[eventName] = bindedCallBack;
+  };
+
+  /**
+   * Removes a callback based on the eventName.
+   * @param {string} eventName The callback type.
+   */
+  unsubscribe = (eventName) => {
+    console.log('unsubscribe ' + eventName);
+    this.eventsCallbacks[eventName] = null;
+  };
+
+  /**
+   * Returns whether the ad is linear.
+   * @return {boolean} True if the ad is linear, False for non linear.
+   */
+  getAdLinear = () => this.attributes['linear'];
+
+  /**
+   * Returns ad width.
+   * @return {number} The ad width.
+   */
+  getAdWidth = () => this.attributes['width'];
+
+  /**
+   * Returns ad height.
+   * @return {number} The ad height.
+   */
+  getAdHeight = () => this.attributes['height'];
+
+  /**
+   * Returns true if the ad is expanded.
+   * @return {boolean}
+   */
+  getAdExpanded = () => this.attributes['expanded'];
+
+  /**
+   * Returns the skippable state of the ad.
+   * @return {boolean}
+   */
+  getAdSkippableState = () => this.attributes['skippableState'];
+
+  /**
+   * Returns the remaining ad time, in seconds.
+   * @return {number} The time remaining in the ad.
+   */
+  getAdRemainingTime = () => this.attributes['remainingTime'];
+
+  /**
+   * Returns the duration of the ad, in seconds.
+   * @return {number} The duration of the ad.
+   */
+  getAdDuration = () => this.attributes['duration'];
+
+  /**
+   * Returns the ad volume.
+   * @return {number} The volume of the ad.
+   */
+  getAdVolume = () => {
+    // this.log("getAdVolume");
+    return this.attributes['volume'];
+  };
+
+  /**
+   * Sets the ad volume.
+   * @param {number} value The volume in percentage.
+   */
+  setAdVolume = (value) => {
+    this.attributes['volume'] = value;
+    // this.log("setAdVolume " + value);
+    this.callEvent('AdVolumeChange');
+  };
+
+  /**
+   * Returns a list of companion ads for the ad.
+   * @return {string} List of companions in VAST XML.
+   */
+  getAdCompanions = () => this.attributes['companions'];
+
+  /**
+   * Returns a list of icons.
+   * @return {string} A list of icons.
+   */
+  getAdIcons = () => this.attributes['icons'];
+
+  /**
+   * Logs events and messages.
+   * @param {string} message
+   */
+  log = (message) => console.log(message);
+}

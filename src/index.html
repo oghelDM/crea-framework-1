@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My Website</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png" />
+  </head>
+  <body>
+    <style>
+      #appId {
+        position: absolute;
+        outline: 3px solid black;
+        width: 80%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        padding: 0;
+        margin-top: 50px;
+        margin-left: 10%;
+        opacity: 0.6;
+      }
+      #videoId {
+        position: absolute;
+        width: 80%;
+        aspect-ratio: 16 / 9;
+        margin-top: 50px;
+        margin-left: 10%;
+        height: unset;
+      }
+    </style>
+    <script>
+      console.log('wtf html script');
+
+      setTimeout(() => {
+        console.log('setTimeout');
+        const ad = window.getVPAIDAd();
+        const slot = document.getElementById('appId');
+        const videoSlot = document.getElementById('videoId');
+        const width = 12;
+        const height = 12;
+        const viewMode = 'viewMode';
+        const desiredBitrate = 'desiredBitrate';
+        const creativeData = {};
+        const environmentVars = { slot, videoSlot };
+        ad.initAd(width, height, viewMode, desiredBitrate, creativeData, environmentVars);
+      }, 1000);
+    </script>
+    <video controls id="videoId">
+      <source src="https://statics.dmcdn.net/d/vpaid/split/assets/video_mid.mp4" type="video/mp4" />
+    </video>
+    <div id="appId"></div>
+  </body>
+</html>
