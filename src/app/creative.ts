@@ -1,4 +1,6 @@
+import { Elastic } from 'gsap';
 import { ImageDM } from '../components/image';
+import { IndexManager } from '../components/indexManager';
 
 export class Creative {
   root: HTMLElement;
@@ -6,14 +8,15 @@ export class Creative {
   constructor(root: HTMLElement) {
     this.root = root;
 
-    for (let i = 0; i < 12; i++) {
+    // Image component
+    for (let i = 0; i < 3; i++) {
       const w = 100 * Math.random();
       const h = 100 * Math.random();
       const l = (100 - w) * Math.random();
       const t = (100 - h) * Math.random();
       const image = new ImageDM('bg', {
-        width: `${w}%`, //'100%',
-        height: `${h}%`, //'100%',
+        width: `${w}%`,
+        height: `${h}%`,
         border: '2px dashed red',
         left: `${l}%`,
         top: `${t}%`,
@@ -22,5 +25,17 @@ export class Creative {
       });
       root.appendChild(image);
     }
+
+    // IndexManager component
+    const idxMgr = new IndexManager({
+      id: 'idxMngrDM',
+      startIndex: 0,
+      focusedElementWidth: 22,
+      debug: true,
+      easing: Elastic.easeOut,
+      onIndexChange: (index) => console.log(index),
+      autoPlay: true
+    });
+    root.appendChild(idxMgr);
   }
 }

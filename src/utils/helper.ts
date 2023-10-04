@@ -24,6 +24,21 @@ export const updateDisplay = (domElement): void => {
   domElement.style.width = isMobile && isLandscape ? 'auto' : '100%';
 };
 
+export const map = (value, start1, stop1, start2, stop2) =>
+  start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+
+export const keepSafe = (idx, nb) => ((idx % nb) + nb) % nb;
+
+export const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+export const random12 = (v1, v2) => map(Math.random(), 0, 1, v1, v2);
+
+export const getClientXY = (evt: PointerEvent, rect = { left: 0, top: 0 }) => {
+  const x = evt.clientX - rect.left;
+  const y = evt.clientY - rect.top;
+  return { x, y };
+};
+
 /**
  * The selectedMedia for the videoSlot
  * @type {Object}

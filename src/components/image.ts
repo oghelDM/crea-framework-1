@@ -34,5 +34,5 @@ export class ImageDM extends HTMLElement {
   }
 }
 
-// declares the new web component to allow constructor instanciation
+// declare the new web component to allow constructor instanciation
 customElements.define('dm-image', ImageDM);
