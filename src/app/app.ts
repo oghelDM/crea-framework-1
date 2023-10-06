@@ -168,80 +168,6 @@ class VPAIDVideoPlayer {
     }
   };
 
-  //////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////
-  //////////////////////// VPAID INTERFACE /////////////////////////////
-  //////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////
-
-  /**
-   * Returns the supported VPAID version.
-   * @param {string} playerVPAIDVersion
-   * @return {string}
-   */
-  handshakeVersion = (_) => '2.0';
-
-  /**
-   * Initializes all attributes in the ad. The ad will not start until startAd is called.
-   * @param {number} width The ad width.
-   * @param {number} height The ad height.
-   * @param {string} viewMode The ad view mode.
-   * @param {number} desiredBitrate The chosen bitrate.
-   * @param {Object} creativeData Data associated with the creative.
-   * @param {Object} environmentVars Runtime variables associated with the creative like the slot and video slot.
-   */
-  initAd = (width, height, viewMode, desiredBitrate, creativeData, environmentVars) => {
-    console.log('initAd');
-    // TODO: do we need to keep this attributes?
-    this.attributes['width'] = width;
-    this.attributes['height'] = height;
-    this.attributes['viewMode'] = viewMode;
-    this.attributes['desiredBitrate'] = desiredBitrate;
-
-    this.creativeWrapper = createDiv('creativeWrapper', {
-      position: 'absolute',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      width: '100%',
-      height: '100%'
-    });
-
-    this.creativeContent = createDiv('creativeContent', {
-      position: 'relative',
-      overflow: 'hidden',
-      aspectRatio: '16 / 9',
-      margin: 'auto'
-    });
-    updateDisplay(this.creativeContent);
-
-    // slot and videoSlot are passed as part of the environmentVars
-    this.slot = environmentVars.slot;
-    this.videoSlot = environmentVars.videoSlot;
-
-    this.creativeWrapper.appendChild(this.creativeContent);
-    this.slot.appendChild(this.creativeWrapper);
-
-    this.updateVideoSlot();
-    this.videoSlot.addEventListener('timeupdate', () => this.timeUpdateHandler());
-    this.videoSlot.addEventListener('loadedmetadata', () => this.loadedMetadata());
-    this.videoSlot.addEventListener('ended', () => this.stopAd());
-    this.slot.addEventListener('click', () => this.clickAd());
-
-    ////////////////////////////////////////////////////////////////////
-    ///////////////////// DM ad instanciation //////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    this.creative = new Creative(this.creativeContent);
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////
-
-    // expected VPAID callback
-    this.callEvent('AdLoaded');
-  };
-
   callEvent = (eventName) => {
     if (eventName in this.eventsCallbacks) {
       this.eventsCallbacks[eventName]();
@@ -252,11 +178,11 @@ class VPAIDVideoPlayer {
    * Called when the ad is clicked.
    * @private
    */
-  clickAd = () => {
-    let url = 'https://www.dailymotion.com/fr';
+  clickAd = (url?: string) => {
+    console.log('clickAd');
 
     if ('AdClickThru' in this.eventsCallbacks) {
-      this.eventsCallbacks['AdClickThru'](url, '0', true);
+      this.eventsCallbacks['AdClickThru'](url || 'https://www.dailymotion.com/fr', '0', true);
     }
   };
 
@@ -307,6 +233,86 @@ class VPAIDVideoPlayer {
   updateVideoPlayerSize = () => {
     this.videoSlot.setAttribute('width', this.attributes['width']);
     this.videoSlot.setAttribute('height', this.attributes['height']);
+  };
+
+  /**
+   * Logs events and messages.
+   * @param {string} message
+   */
+  log = (message) => console.log(message);
+
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////// VPAID INTERFACE /////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////
+
+  /**
+   * Returns the supported VPAID version.
+   * @param {string} playerVPAIDVersion
+   * @return {string}
+   */
+  handshakeVersion = (_) => '2.0';
+
+  /**
+   * Initializes all attributes in the ad. The ad will not start until startAd is called.
+   * @param {number} width The ad width.
+   * @param {number} height The ad height.
+   * @param {string} viewMode The ad view mode.
+   * @param {number} desiredBitrate The chosen bitrate.
+   * @param {Object} creativeData Data associated with the creative.
+   * @param {Object} environmentVars Runtime variables associated with the creative like the slot and video slot.
+   */
+  initAd = (width, height, viewMode, desiredBitrate, creativeData, environmentVars) => {
+    console.log('initAd');
+    // TODO: do we need to keep this attributes Object?
+    this.attributes['width'] = width;
+    this.attributes['height'] = height;
+    this.attributes['viewMode'] = viewMode;
+    this.attributes['desiredBitrate'] = desiredBitrate;
+
+    this.creativeWrapper = createDiv('creativeWrapper', {
+      position: 'absolute',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%'
+    });
+
+    this.creativeContent = createDiv('creativeContent', {
+      position: 'relative',
+      overflow: 'hidden',
+      aspectRatio: '16 / 9',
+      margin: 'auto'
+    });
+    updateDisplay(this.creativeContent);
+
+    // slot and videoSlot are passed as part of the environmentVars
+    this.slot = environmentVars.slot;
+    this.videoSlot = environmentVars.videoSlot;
+
+    this.creativeWrapper.appendChild(this.creativeContent);
+    this.slot.appendChild(this.creativeWrapper);
+
+    this.updateVideoSlot();
+    this.videoSlot.addEventListener('timeupdate', () => this.timeUpdateHandler());
+    this.videoSlot.addEventListener('loadedmetadata', () => this.loadedMetadata());
+    this.videoSlot.addEventListener('ended', () => this.stopAd());
+    // this.slot.addEventListener('click', () => this.clickAd());
+
+    ////////////////////////////////////////////////////////////////////
+    ///////////////////// DM ad instanciation //////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    this.creative = new Creative(this.creativeContent, { onClick: (url?: string) => this.clickAd(url) });
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////
+
+    // expected VPAID callback
+    this.callEvent('AdLoaded');
   };
 
   /**
@@ -417,12 +423,14 @@ class VPAIDVideoPlayer {
    */
   getAdLinear = () => this.attributes['linear'];
 
+  // TODO: is this function necessary? Not present in VPAID documentation
   /**
    * Returns ad width.
    * @return {number} The ad width.
    */
   getAdWidth = () => this.attributes['width'];
 
+  // TODO: is this function necessary? Not present in VPAID documentation
   /**
    * Returns ad height.
    * @return {number} The ad height.
@@ -447,6 +455,7 @@ class VPAIDVideoPlayer {
    */
   getAdRemainingTime = () => this.attributes['remainingTime'];
 
+  // TODO: put this to the actual video remaining time?
   /**
    * Returns the duration of the ad, in seconds.
    * @return {number} The duration of the ad.
@@ -472,21 +481,17 @@ class VPAIDVideoPlayer {
     this.callEvent('AdVolumeChange');
   };
 
+  // TODO: is this function necessary? Not present in VPAID documentation
   /**
    * Returns a list of companion ads for the ad.
    * @return {string} List of companions in VAST XML.
    */
   getAdCompanions = () => this.attributes['companions'];
 
+  // TODO: is this function necessary? Not present in VPAID documentation
   /**
    * Returns a list of icons.
    * @return {string} A list of icons.
    */
   getAdIcons = () => this.attributes['icons'];
-
-  /**
-   * Logs events and messages.
-   * @param {string} message
-   */
-  log = (message) => console.log(message);
 }

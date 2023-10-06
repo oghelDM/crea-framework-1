@@ -24,14 +24,14 @@ export const updateDisplay = (domElement): void => {
   domElement.style.width = isMobile && isLandscape ? 'auto' : '100%';
 };
 
-export const map = (value, start1, stop1, start2, stop2) =>
+export const map = (value: number, start1: number, stop1: number, start2: number, stop2: number): number =>
   start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 
-export const keepSafe = (idx, nb) => ((idx % nb) + nb) % nb;
+export const keepSafe = (idx: number, nb: number): number => ((idx % nb) + nb) % nb;
 
-export const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+export const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
 
-export const random12 = (v1, v2) => map(Math.random(), 0, 1, v1, v2);
+export const random12 = (v1: number, v2: number): number => map(Math.random(), 0, 1, v1, v2);
 
 export const getClientXY = (evt: PointerEvent, rect = { left: 0, top: 0 }) => {
   const x = evt.clientX - rect.left;

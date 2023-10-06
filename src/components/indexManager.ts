@@ -2,9 +2,10 @@ import { gsap, Power1 } from 'gsap';
 import { getClientXY } from '../utils/helper';
 import { createDiv } from '../utils/divMaker';
 
-interface IndexManagerType {
+export interface IndexManagerType {
   id: string;
   focusedElementWidth: number; // the width in percent, occupied by the focused element
+  focusedElementHeight: number; // the height in percent, occupied by the focused element
   startIndex?: number;
   onIndexChange?: (index: number) => void; // callback used when the currentIndex is updated
   easing?: gsap.EaseFunction;
@@ -17,7 +18,6 @@ interface IndexManagerType {
 export class IndexManager extends HTMLElement {
   mouseX: number;
   mouseY: number;
-  focusedElementWidth: number;
   isMouseDown: boolean = false;
   previousIndex: number;
   currentIndex: number;
@@ -25,7 +25,10 @@ export class IndexManager extends HTMLElement {
   easing: gsap.EaseFunction;
   speedCoefficient: number;
   debug: boolean;
-  debugDiv: HTMLElement;
+  debugCurrentIndexDiv: HTMLElement;
+  debugElementDiv: HTMLElement;
+  focusedElementWidth: number;
+  focusedElementHeight: number;
 
   private autoPlayTimeoutId: number;
   private autoPlayIntervalId: number;
@@ -33,14 +36,15 @@ export class IndexManager extends HTMLElement {
   constructor(
     {
       id,
-      focusedElementWidth,
       startIndex = 0,
       onIndexChange = (_: number) => {},
       easing = Power1.easeOut,
       interactive = true,
       speedCoefficient = 1,
       autoPlay = false,
-      debug = false
+      debug = false,
+      focusedElementWidth,
+      focusedElementHeight
     }: IndexManagerType,
     style: any = {}
   ) {
@@ -49,11 +53,12 @@ export class IndexManager extends HTMLElement {
     this.setAttribute('id', id);
     this.previousIndex = startIndex;
     this.currentIndex = startIndex;
-    this.focusedElementWidth = focusedElementWidth;
     this.onIndexChange = onIndexChange;
     this.easing = easing;
     this.speedCoefficient = speedCoefficient;
     this.debug = debug;
+    this.focusedElementWidth = focusedElementWidth;
+    this.focusedElementHeight = focusedElementHeight;
 
     const actualStyle = {
       display: 'block',
@@ -61,8 +66,8 @@ export class IndexManager extends HTMLElement {
       width: '100%',
       height: '100%',
       opacity: 1,
-      scale: 1,
-      backgroundColor: debug ? '#00ff00aa' : 'unset',
+      backgroundColor: debug ? '#00ff0088' : 'unset',
+      overflow: 'hidden',
 
       ...style
     };
@@ -72,14 +77,25 @@ export class IndexManager extends HTMLElement {
     }
 
     if (interactive) {
-      this.setUpPointerEvents();
+      this.setUpPointerEvents(id);
     }
 
     if (autoPlay) {
       this.startAutoPlay();
     }
+
     if (debug) {
-      this.debugDiv = createDiv('currIdx', {
+      this.debugElementDiv = createDiv('debugElementDiv', {
+        width: `${focusedElementWidth}%`,
+        height: '100px',
+        backgroundColor: 'red',
+        opacity: 0.8,
+        position: 'absolute',
+        bottom: '0',
+        pointerEvents: 'none'
+      });
+      this.appendChild(this.debugElementDiv);
+      this.debugCurrentIndexDiv = createDiv('currIdx', {
         backgroundColor: '#ffffff88',
         position: 'absolute',
         pointerEvents: 'none',
@@ -87,27 +103,36 @@ export class IndexManager extends HTMLElement {
         fontFamily: 'monospace',
         fontSize: '18px'
       });
-      this.appendChild(this.debugDiv);
+      this.appendChild(this.debugCurrentIndexDiv);
     }
-    this.update();
   }
 
-  setUpPointerEvents = () => {
-    this.addEventListener('pointerdown', (e: PointerEvent) => this.onMouseDown(e));
-    this.addEventListener('pointermove', (e: PointerEvent) => this.onMouseMove(e));
-    this.addEventListener('pointerup', () => this.onMouseUp());
-    this.addEventListener('pointerout', () => this.onMouseUp());
-    this.addEventListener('pointerleave', () => this.onMouseUp());
+  private setUpPointerEvents = (id: string): void => {
+    const interactionDiv = createDiv(`${id}-interaction`, {
+      display: 'block',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      backgroundColor: this.debug ? '#0000ffaa' : 'unset'
+    });
+    this.appendChild(interactionDiv);
+
+    interactionDiv.addEventListener('pointerdown', (e: PointerEvent) => this.onMouseDown(e));
+    interactionDiv.addEventListener('pointermove', (e: PointerEvent) => this.onMouseMove(e));
+    interactionDiv.addEventListener('pointerup', () => this.onMouseUp());
+    interactionDiv.addEventListener('pointerout', () => this.onMouseUp());
+    interactionDiv.addEventListener('pointerleave', () => this.onMouseUp());
   };
 
-  update = () => {
+  protected update(): void {
     this.onIndexChange(this.currentIndex);
     if (this.debug) {
-      this.debugDiv.innerText = this.currentIndex.toFixed(2);
+      this.debugCurrentIndexDiv.innerText = this.currentIndex.toFixed(2);
+      this.debugElementDiv.style.left = `${this.currentIndex * this.focusedElementWidth}%`;
     }
-  };
+  }
 
-  onMouseDown = (e: PointerEvent) => {
+  private onMouseDown = (e: PointerEvent): void => {
     if (this.autoPlayTimeoutId || this.autoPlayIntervalId) {
       window.clearTimeout(this.autoPlayTimeoutId);
       window.clearInterval(this.autoPlayIntervalId);
@@ -115,6 +140,7 @@ export class IndexManager extends HTMLElement {
       this.autoPlayIntervalId = undefined;
     }
 
+    this.previousIndex = this.currentIndex;
     this.isMouseDown = true;
     gsap.killTweensOf(this);
     const clientXY = getClientXY(e);
@@ -122,7 +148,7 @@ export class IndexManager extends HTMLElement {
     this.mouseY = clientXY.y;
   };
 
-  onMouseMove = (e: PointerEvent) => {
+  private onMouseMove = (e: PointerEvent): void => {
     if (!this.isMouseDown) {
       return;
     }
@@ -132,7 +158,7 @@ export class IndexManager extends HTMLElement {
     const mouseX = clientXY.x;
     const mouseY = clientXY.y;
 
-    const dx = mouseX - this.mouseX;
+    const dx = this.mouseX - mouseX;
 
     const focusedElementWidthPixels = (this.getBoundingClientRect().width * this.focusedElementWidth) / 100;
     this.currentIndex += dx / focusedElementWidthPixels;
@@ -142,18 +168,17 @@ export class IndexManager extends HTMLElement {
     this.update();
   };
 
-  onMouseUp = () => {
-    console.log('onMouseUp');
+  private onMouseUp = (): void => {
     if (!this.isMouseDown) {
       return;
     }
     this.isMouseDown = false;
-    const dx = (this.currentIndex - this.previousIndex) * 10;
-    const targetIndex = Math.round(this.currentIndex + dx); //dx > 0 ? Math.ceil(this.currentIndex + dx) : Math.floor(this.currentIndex + dx);
+    const dx = (this.currentIndex - this.previousIndex) * 3;
+    const targetIndex = Math.round(this.currentIndex + dx);
     this.goToIndex(targetIndex);
   };
 
-  goToIndex = (targetIndex: number) => {
+  private goToIndex = (targetIndex: number): void => {
     const duration = (0.1 + Math.abs(targetIndex - this.currentIndex) * 0.2) * this.speedCoefficient;
     gsap.killTweensOf(this);
     gsap.timeline().to(this, {
@@ -164,7 +189,11 @@ export class IndexManager extends HTMLElement {
     });
   };
 
-  startAutoPlay = (delay: number = 3, frequency: number = 1.5, deltaIndex: number = 1) => {
+  public moveIndexBy = (deltaIndex: number): void => {
+    this.goToIndex(Math.round(this.currentIndex + deltaIndex));
+  };
+
+  public startAutoPlay = (delay: number = 3, frequency: number = 1.5, deltaIndex: number = 1): void => {
     this.autoPlayTimeoutId = window.setTimeout(() => {
       this.autoPlayIntervalId = window.setInterval(
         () => this.goToIndex(Math.round(this.currentIndex + deltaIndex)),
