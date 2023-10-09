@@ -13,11 +13,11 @@ export interface IndexManagerType {
   autoPlay?: boolean;
   speedCoefficient?: number;
   debug?: boolean;
+  isVertical?: boolean; // whether the user interaction should be vertical or not
 }
 
 export class IndexManager extends HTMLElement {
-  mouseX: number;
-  mouseY: number;
+  mouseXorY: number;
   isMouseDown: boolean = false;
   previousIndex: number;
   currentIndex: number;
@@ -29,6 +29,7 @@ export class IndexManager extends HTMLElement {
   debugElementDiv: HTMLElement;
   focusedElementWidth: number;
   focusedElementHeight: number;
+  isVertical: boolean;
 
   private autoPlayTimeoutId: number;
   private autoPlayIntervalId: number;
@@ -44,7 +45,8 @@ export class IndexManager extends HTMLElement {
       autoPlay = false,
       debug = false,
       focusedElementWidth,
-      focusedElementHeight
+      focusedElementHeight,
+      isVertical = false
     }: IndexManagerType,
     style: any = {}
   ) {
@@ -59,6 +61,7 @@ export class IndexManager extends HTMLElement {
     this.debug = debug;
     this.focusedElementWidth = focusedElementWidth;
     this.focusedElementHeight = focusedElementHeight;
+    this.isVertical = isVertical;
 
     const actualStyle = {
       display: 'block',
@@ -144,8 +147,7 @@ export class IndexManager extends HTMLElement {
     this.isMouseDown = true;
     gsap.killTweensOf(this);
     const clientXY = getClientXY(e);
-    this.mouseX = clientXY.x;
-    this.mouseY = clientXY.y;
+    this.mouseXorY = clientXY[this.isVertical ? 'y' : 'x'];
   };
 
   private onMouseMove = (e: PointerEvent): void => {
@@ -155,16 +157,16 @@ export class IndexManager extends HTMLElement {
     this.previousIndex = this.currentIndex;
 
     const clientXY = getClientXY(e);
-    const mouseX = clientXY.x;
-    const mouseY = clientXY.y;
+    const mouseXorY = clientXY[this.isVertical ? 'y' : 'x'];
 
-    const dx = this.mouseX - mouseX;
+    const delta = this.mouseXorY - mouseXorY;
+    const focusedElementSizeInPixels =
+      (this.getBoundingClientRect()[this.isVertical ? 'height' : 'width'] *
+        this[this.isVertical ? 'focusedElementHeight' : 'focusedElementWidth']) /
+      100;
+    this.currentIndex += delta / focusedElementSizeInPixels;
 
-    const focusedElementWidthPixels = (this.getBoundingClientRect().width * this.focusedElementWidth) / 100;
-    this.currentIndex += dx / focusedElementWidthPixels;
-
-    this.mouseX = mouseX;
-    this.mouseY = mouseY;
+    this.mouseXorY = mouseXorY;
     this.update();
   };
 

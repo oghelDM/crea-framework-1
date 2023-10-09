@@ -57,7 +57,10 @@ export class CarouselBasic extends IndexManager {
         backgroundSize: 'cover',
         backgroundImage: `url("${url}")`,
         border: this.debug ? '1px solid yellow' : 'unset',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        /* added to fix webkit bug jitter */
+        '-webkit-backface-visibility': 'hidden',
+        '-webkit-transform': 'perspective(1000px)'
       });
       element.addEventListener('click', () => onClick(redirectUrl));
       // position the elements behind the interactive div
@@ -88,64 +91,137 @@ export class CarouselBasic extends IndexManager {
       focusedElementHeight,
       unfocusedElementHeight,
       focusedElementOpacity,
-      unfocusedElementOpacity,
-      gap
+      unfocusedElementOpacity
     } = this;
-    // then only display and place the visible elements
 
-    let iMin = 0;
-    let iMax = this.elements.length - 1;
-    let baseLeft = 0;
-    switch (this.horizontalAlign) {
-      case HORIZONTAL_ALIGN.LEFT:
-        iMin = Math.floor(currentIndex);
-        iMax = Math.ceil(currentIndex + (100 - focusedElementWidth) / (unfocusedElementWidth + gap));
-        break;
-      case HORIZONTAL_ALIGN.CENTER:
-        baseLeft = 50 - focusedElementWidth / 2;
-        iMin = Math.floor(currentIndex - (50 - focusedElementWidth / 2) / unfocusedElementWidth);
-        iMax = Math.ceil(currentIndex + (50 - focusedElementWidth / 2) / unfocusedElementWidth);
-        break;
-      case HORIZONTAL_ALIGN.RIGHT:
-        baseLeft = 100 - focusedElementWidth;
-        iMin = Math.floor(currentIndex - (100 - focusedElementWidth) / unfocusedElementWidth);
-        iMax = Math.ceil(currentIndex);
-        break;
-    }
-    console.log('iMin iMax: ', iMin, iMax);
+    // get the indices of only the elements that need to be rendered
+    const { iMin, iMax, focusPosition } = this.getiMinMax();
+
     for (let i = iMin; i <= iMax; i++) {
       const d = Math.min(Math.abs(i - currentIndex), 1);
 
-      let left = baseLeft + (i - currentIndex) * (unfocusedElementWidth + this.gap);
-      if (i > currentIndex) {
-        left += map(d, 0, 1, 0, focusedElementWidth - unfocusedElementWidth);
-      }
+      const { left, right, top, bottom } = this.getLeftRightTopBottom(focusPosition, d, i);
       const width = map(d, 0, 1, focusedElementWidth, unfocusedElementWidth);
       const height = map(d, 0, 1, focusedElementHeight, unfocusedElementHeight);
       const opacity = map(d, 0, 1, focusedElementOpacity, unfocusedElementOpacity);
-      let top = 'unset';
-      let bottom = 'unset';
-      switch (this.verticalAlign) {
-        case VERTICAL_ALIGN.TOP:
-          top = '0';
-          break;
-        case VERTICAL_ALIGN.CENTER:
-          top = `${50 - map(d, 0, 1, focusedElementHeight, unfocusedElementHeight) / 2}`;
-          break;
-        case VERTICAL_ALIGN.BOTTOM:
-          bottom = '0';
-          break;
-      }
+
       const iSafe = keepSafe(i, this.elements.length);
       const element = this.elements[iSafe];
-      element.style.left = `${left}%`;
       element.style.width = `${width}%`;
       element.style.height = `${height}%`;
-      element.style.top = `${top}%`;
-      element.style.bottom = `${bottom}%`;
+      element.style.left = `${left}`;
+      element.style.right = `${right}`;
+      element.style.top = `${top}`;
+      element.style.bottom = `${bottom}`;
       element.style.opacity = `${opacity}`;
     }
   }
+
+  // return the indices surrounding currentIndex that need to be rendered
+  // and the focusPosition, which is the left or top position of the focused element
+  getiMinMax = () => {
+    const {
+      currentIndex,
+      focusedElementWidth,
+      unfocusedElementWidth,
+      focusedElementHeight,
+      unfocusedElementHeight,
+      gap
+    } = this;
+
+    let iMin = 0;
+    let iMax = 0;
+    let focusPosition = 0;
+    if (this.isVertical) {
+      switch (this.verticalAlign) {
+        case VERTICAL_ALIGN.TOP:
+          iMin = Math.floor(currentIndex);
+          iMax = Math.ceil(currentIndex + (100 - focusedElementHeight) / (unfocusedElementHeight + gap));
+          break;
+        case VERTICAL_ALIGN.CENTER:
+          focusPosition = 50 - focusedElementHeight / 2;
+          iMin = Math.floor(currentIndex - (50 - focusedElementHeight / 2) / unfocusedElementHeight);
+          iMax = Math.ceil(currentIndex + (50 - focusedElementHeight / 2) / unfocusedElementHeight);
+          break;
+        case VERTICAL_ALIGN.BOTTOM:
+          focusPosition = 100 - focusedElementHeight;
+          iMin = Math.floor(currentIndex - (100 - focusedElementHeight) / unfocusedElementHeight);
+          iMax = Math.ceil(currentIndex);
+          break;
+      }
+    } else {
+      switch (this.horizontalAlign) {
+        case HORIZONTAL_ALIGN.LEFT:
+          iMin = Math.floor(currentIndex);
+          iMax = Math.ceil(currentIndex + (100 - focusedElementWidth) / (unfocusedElementWidth + gap));
+          break;
+        case HORIZONTAL_ALIGN.CENTER:
+          focusPosition = 50 - focusedElementWidth / 2;
+          iMin = Math.floor(currentIndex - (50 - focusedElementWidth / 2) / unfocusedElementWidth);
+          iMax = Math.ceil(currentIndex + (50 - focusedElementWidth / 2) / unfocusedElementWidth);
+          break;
+        case HORIZONTAL_ALIGN.RIGHT:
+          focusPosition = 100 - focusedElementWidth;
+          iMin = Math.floor(currentIndex - (100 - focusedElementWidth) / unfocusedElementWidth);
+          iMax = Math.ceil(currentIndex);
+          break;
+      }
+    }
+
+    return { iMin, iMax, focusPosition };
+  };
+
+  getLeftRightTopBottom = (focusPosition: number, d: number, i: number) => {
+    const {
+      isVertical,
+      focusedElementWidth,
+      unfocusedElementWidth,
+      focusedElementHeight,
+      unfocusedElementHeight,
+      gap,
+      currentIndex
+    } = this;
+
+    let position =
+      focusPosition + (i - currentIndex) * ((isVertical ? unfocusedElementHeight : unfocusedElementWidth) + gap);
+    if (i > currentIndex) {
+      const delta = isVertical
+        ? focusedElementHeight - unfocusedElementHeight
+        : focusedElementWidth - unfocusedElementWidth;
+      position += map(d, 0, 1, 0, delta);
+    }
+
+    let top = isVertical ? `${position}%` : 'unset';
+    let bottom = 'unset';
+    let left = isVertical ? 'unset' : `${position}%`;
+    let right = 'unset';
+    if (isVertical) {
+      switch (this.horizontalAlign) {
+        case HORIZONTAL_ALIGN.LEFT:
+          left = '0%';
+          break;
+        case HORIZONTAL_ALIGN.CENTER:
+          left = `${50 - map(d, 0, 1, focusedElementWidth, unfocusedElementWidth) / 2}%`;
+          break;
+        case HORIZONTAL_ALIGN.RIGHT:
+          right = '0%';
+          break;
+      }
+    } else {
+      switch (this.verticalAlign) {
+        case VERTICAL_ALIGN.TOP:
+          top = '0%';
+          break;
+        case VERTICAL_ALIGN.CENTER:
+          top = `${50 - map(d, 0, 1, focusedElementHeight, unfocusedElementHeight) / 2}%`;
+          break;
+        case VERTICAL_ALIGN.BOTTOM:
+          bottom = '0%';
+          break;
+      }
+    }
+    return { top, bottom, left, right };
+  };
 }
 
 // declare the new web component to allow constructor instanciation
