@@ -1,8 +1,9 @@
 import { Elastic, Quad } from 'gsap';
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../constants';
+import { Split } from '../components/Split';
 import { ImageDM } from '../components/image';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../constants';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -83,13 +84,26 @@ export class Creative {
         autoPlay: true,
         onClick,
         gap: 2,
-        horizontalAlign: HORIZONTAL_ALIGN.LEFT,
+        horizontalAlign: HORIZONTAL_ALIGN.CENTER,
         verticalAlign: VERTICAL_ALIGN.CENTER,
         focusedElementOpacity: 1,
         unfocusedElementOpacity: 0.6
+        // isVertical: true
       },
       { width: '60%', right: '20%' }
     );
     root.appendChild(carouselBasic);
+
+    // Split component
+    const split = new Split({
+      id: 'idxMngrDM',
+      leftImageUrl:
+        'https://images.unsplash.com/photo-1695605118408-b31785f23152?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+      rightImageUrl:
+        'https://images.unsplash.com/photo-1693711836001-99859bb7185a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3NXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+      debug: true,
+      originalPosition: 33
+    });
+    root.appendChild(split);
   }
 }

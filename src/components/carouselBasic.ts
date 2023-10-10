@@ -1,6 +1,6 @@
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../constants';
 import { createDiv } from '../utils/divMaker';
 import { keepSafe, map } from '../utils/helper';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../constants';
 import { IndexManager, IndexManagerType } from './indexManager';
 
 interface imageType {
@@ -55,7 +55,7 @@ export class CarouselBasic extends IndexManager {
         backgroundColor: '#ffffff88',
         position: 'absolute',
         backgroundSize: 'cover',
-        backgroundImage: `url("${url}")`,
+        backgroundImage: `url(${url})`,
         border: this.debug ? '1px solid yellow' : 'unset',
         backgroundPosition: 'center',
         /* added to fix webkit bug jitter */
