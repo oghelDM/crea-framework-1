@@ -1,28 +1,21 @@
 import { createDiv } from '../utils/divMaker';
 import { keepSafe, map } from '../utils/helper';
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../constants';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
 import { IndexManager, IndexManagerType } from './indexManager';
 
-interface imageType {
-  url: string;
-  redirectUrl?: string;
-}
-
 interface CarouselBasicType extends IndexManagerType {
-  images: imageType[]; // image elements
+  products: string[]; // image elements
   unfocusedElementWidth?: number; // the width in percent, occupied by the unfocused elements
   unfocusedElementHeight?: number; // the height in percent, occupied by the unfocused elements
   focusedElementOpacity?: number; // the focused element's opacity
   unfocusedElementOpacity?: number; // the unfocused element's opacity
-  redirectUrl: string; // main url redirection
-  onClick: (url?: string) => void; // onClick callback
   gap?: number; // horizontal gap between elements, in percents
   verticalAlign?: VERTICAL_ALIGN; // vertical alignmenent, top, center or bottom
   horizontalAlign?: HORIZONTAL_ALIGN; // horizontal alignmenent, left, center or right
 }
 
 export class CarouselBasic extends IndexManager {
-  elements: HTMLElement[];
+  products: HTMLElement[];
   gap: number;
   verticalAlign: VERTICAL_ALIGN;
   horizontalAlign: HORIZONTAL_ALIGN;
@@ -35,8 +28,7 @@ export class CarouselBasic extends IndexManager {
     super(props, style);
 
     const {
-      images = [],
-      onClick,
+      products,
       id,
       gap = 0,
       verticalAlign = VERTICAL_ALIGN.CENTER,
@@ -48,7 +40,7 @@ export class CarouselBasic extends IndexManager {
       focusedElementOpacity = 1,
       unfocusedElementOpacity = 1
     } = props;
-    this.elements = images.map(({ url, redirectUrl }, index) => {
+    this.products = products.map((url, index) => {
       const element = createDiv(`${id}-${index}`, {
         width: `${focusedElementWidth}%`,
         height: '144px',
@@ -62,7 +54,7 @@ export class CarouselBasic extends IndexManager {
         '-webkit-backface-visibility': 'hidden',
         '-webkit-transform': 'perspective(1000px)'
       });
-      element.addEventListener('click', () => onClick(redirectUrl));
+
       // position the elements behind the interactive div
       this.insertBefore(element, this.childNodes[0]);
       return element;
@@ -82,7 +74,7 @@ export class CarouselBasic extends IndexManager {
     super.update();
 
     // first hide all the elements
-    this.elements.forEach((element) => (element.style.opacity = '0'));
+    this.products.forEach((element) => (element.style.opacity = '0'));
 
     const {
       currentIndex,
@@ -105,8 +97,8 @@ export class CarouselBasic extends IndexManager {
       const height = map(d, 0, 1, focusedElementHeight, unfocusedElementHeight);
       const opacity = map(d, 0, 1, focusedElementOpacity, unfocusedElementOpacity);
 
-      const iSafe = keepSafe(i, this.elements.length);
-      const element = this.elements[iSafe];
+      const iSafe = keepSafe(i, this.products.length);
+      const element = this.products[iSafe];
       element.style.width = `${width}%`;
       element.style.height = `${height}%`;
       element.style.left = `${left}`;

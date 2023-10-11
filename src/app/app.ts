@@ -71,102 +71,8 @@ class VPAIDVideoPlayer {
     // }
   };
 
-  updateInteractiveSlot = () => {
-    const isMobile = mobileCheck();
-
-    const creativeWidth = window.innerWidth;
-
-    this.creativeWrapper = document.createElement('div');
-    this.creativeWrapper.style.position = 'absolute';
-    this.creativeWrapper.style.display = 'flex';
-    this.creativeWrapper.style.flexDirection = 'column';
-    this.creativeWrapper.style.justifyContent = 'center';
-    this.creativeWrapper.style.width = '100%';
-    this.creativeWrapper.style.height = '100%';
-
-    this.creativeContent = document.createElement('div');
-    this.creativeContent.style.position = 'relative';
-    this.creativeContent.style.overflow = 'hidden';
-    this.creativeContent.style.aspectRatio = '16 / 9';
-    this.creativeContent.style.margin = 'auto';
-    updateDisplay(this.creativeContent);
-
-    const splitView = document.createElement('div');
-    splitView.style.position = 'relative';
-    splitView.style.width = '100%';
-    splitView.style.height = '100%';
-    splitView.style.overflow = 'hidden';
-
-    const bg_bottom = document.createElement('div');
-    bg_bottom.style.position = 'absolute';
-    bg_bottom.style.width = '100%';
-    bg_bottom.style.height = '100%';
-    bg_bottom.style.backgroundPosition = 'center';
-    bg_bottom.style.backgroundRepeat = 'no-repeat';
-    // bg_bottom.style.initial = 'no-repeat';
-    bg_bottom.style.backgroundSize = 'contain';
-    bg_bottom.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_1.png")`;
-    bg_bottom.style.overflow = 'hidden';
-    bg_bottom.style.zIndex = '1';
-
-    const bg_top = document.createElement('div');
-    bg_top.style.position = 'absolute';
-    bg_top.style.right = '0%';
-    bg_top.style.width = '0%';
-    bg_top.style.height = '100%';
-    bg_top.style.backgroundPosition = 'right';
-    bg_top.style.backgroundRepeat = 'no-repeat';
-    // bg_top.style.initial = 'no-repeat';
-    bg_top.style.backgroundSize = 'cover';
-    bg_top.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/bg_2.png")`;
-    bg_top.style.overflow = 'hidden';
-    bg_top.style.zIndex = '2';
-
-    const handle = document.createElement('div');
-    handle.style.position = 'absolute';
-    handle.style.top = '0%';
-    handle.style.height = '100%';
-    handle.style.backgroundPosition = 'center';
-    handle.style.backgroundRepeat = 'no-repeat';
-    // handle.style.initial = 'no-repeat';
-    handle.style.backgroundImage = `url("https://statics.dmcdn.net/d/vpaid/split/assets/split.png")`;
-    handle.style.zIndex = '5';
-    // handle.style.backgroundColor = "red";
-
-    splitView.appendChild(bg_bottom);
-    // bg_top.appendChild(bg_top_img);
-    splitView.appendChild(bg_top);
-    this.creativeContent.appendChild(splitView);
-    this.creativeContent.appendChild(handle);
-    this.creativeWrapper.appendChild(this.creativeContent);
-    this.slot.appendChild(this.creativeWrapper);
-
-    if (isMobile) {
-      handle.style.width = '15%';
-      handle.style.right = `-${parseFloat(handle.style.width) / 3}%`;
-      handle.style.backgroundSize = '70%';
-
-      handle.addEventListener('touchmove', function (evt) {
-        evt.stopImmediatePropagation();
-        // Move the handle.
-        handle.style.left = evt.targetTouches[0].clientX - handle.clientWidth / 2 + 'px';
-        // Adjust the top panel width.
-        bg_top.style.width = creativeWidth - evt.targetTouches[0].clientX + 'px';
-      });
-    } else {
-      handle.style.width = '5%';
-      handle.style.right = '0%';
-      handle.style.backgroundSize = 'contain';
-
-      splitView.addEventListener('mousemove', function (evt) {
-        evt.stopImmediatePropagation();
-        // Move the handle.
-        handle.style.left = evt.clientX - handle.clientWidth / 2 + 'px';
-        // Adjust the top panel width.
-        bg_top.style.width = creativeWidth - evt.clientX + 'px';
-      });
-    }
-  };
+  // TODO?
+  updateInteractiveSlot = () => {};
 
   callEvent = (eventName) => {
     if (eventName in this.eventsCallbacks) {
@@ -178,11 +84,11 @@ class VPAIDVideoPlayer {
    * Called when the ad is clicked.
    * @private
    */
-  clickAd = (url?: string) => {
-    console.log('clickAd');
+  clickAd = (url = 'https://www.dailymotion.com/fr') => {
+    console.log('clickAd:', url);
 
     if ('AdClickThru' in this.eventsCallbacks) {
-      this.eventsCallbacks['AdClickThru'](url || 'https://www.dailymotion.com/fr', '0', true);
+      this.eventsCallbacks['AdClickThru'](url, '0', true);
     }
   };
 

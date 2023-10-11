@@ -1,9 +1,9 @@
 import { gsap, Power1 } from 'gsap';
 import { getClientXY } from '../utils/helper';
 import { createDiv } from '../utils/divMaker';
+import { ComponentBaseType } from '../types';
 
-export interface IndexManagerType {
-  id: string;
+export interface IndexManagerType extends ComponentBaseType {
   focusedElementWidth: number; // the width in percent, occupied by the focused element
   focusedElementHeight: number; // the height in percent, occupied by the focused element
   startIndex?: number;
@@ -12,13 +12,13 @@ export interface IndexManagerType {
   interactive?: boolean;
   autoPlay?: boolean;
   speedCoefficient?: number;
-  debug?: boolean;
   isVertical?: boolean; // whether the user interaction should be vertical or not
 }
 
 export class IndexManager extends HTMLElement {
   mouseXorY: number;
   isMouseDown: boolean = false;
+  mouseHasMoved: boolean = false;
   previousIndex: number;
   currentIndex: number;
   onIndexChange: (index: number) => void;
@@ -30,6 +30,8 @@ export class IndexManager extends HTMLElement {
   focusedElementWidth: number;
   focusedElementHeight: number;
   isVertical: boolean;
+  onClick: (url: string) => void;
+  redirectUrl: string;
 
   private autoPlayTimeoutId: number;
   private autoPlayIntervalId: number;
@@ -46,7 +48,9 @@ export class IndexManager extends HTMLElement {
       debug = false,
       focusedElementWidth,
       focusedElementHeight,
-      isVertical = false
+      isVertical = false,
+      onClick,
+      redirectUrl
     }: IndexManagerType,
     style: any = {}
   ) {
@@ -62,6 +66,8 @@ export class IndexManager extends HTMLElement {
     this.focusedElementWidth = focusedElementWidth;
     this.focusedElementHeight = focusedElementHeight;
     this.isVertical = isVertical;
+    this.onClick = onClick;
+    this.redirectUrl = redirectUrl;
 
     const actualStyle = {
       display: 'block',
@@ -145,6 +151,7 @@ export class IndexManager extends HTMLElement {
 
     this.previousIndex = this.currentIndex;
     this.isMouseDown = true;
+    this.mouseHasMoved = false;
     gsap.killTweensOf(this);
     const clientXY = getClientXY(e);
     this.mouseXorY = clientXY[this.isVertical ? 'y' : 'x'];
@@ -154,6 +161,7 @@ export class IndexManager extends HTMLElement {
     if (!this.isMouseDown) {
       return;
     }
+    this.mouseHasMoved = true;
     this.previousIndex = this.currentIndex;
 
     const clientXY = getClientXY(e);
@@ -175,6 +183,10 @@ export class IndexManager extends HTMLElement {
       return;
     }
     this.isMouseDown = false;
+    if (!this.mouseHasMoved) {
+      this.onClick(this.redirectUrl);
+      return;
+    }
     const dx = (this.currentIndex - this.previousIndex) * 3;
     const targetIndex = Math.round(this.currentIndex + dx);
     this.goToIndex(targetIndex);

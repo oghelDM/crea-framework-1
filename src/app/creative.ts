@@ -3,7 +3,7 @@ import { Split } from '../components/Split';
 import { ImageDM } from '../components/image';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../constants';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -50,29 +50,13 @@ export class Creative {
     const carouselBasic = new CarouselBasic(
       {
         id: 'carouselBasicDM',
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-            redirectUrl: 'http://www.google.com?q=0'
-          },
-          {
-            url: 'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-            redirectUrl: 'http://www.google.com?q=1'
-          },
-          {
-            url: 'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-            redirectUrl: 'http://www.google.com?q=2'
-          },
-          {
-            url: 'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-            redirectUrl: 'http://www.google.com?q=3'
-          },
-          {
-            url: 'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-            redirectUrl: 'http://www.google.com?q=4'
-          }
+        products: [
+          'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
         ],
-        redirectUrl: '',
         startIndex: 0,
         focusedElementWidth: 40,
         unfocusedElementWidth: 21,
@@ -95,15 +79,19 @@ export class Creative {
     root.appendChild(carouselBasic);
 
     // Split component
-    const split = new Split({
-      id: 'idxMngrDM',
-      leftImageUrl:
-        'https://images.unsplash.com/photo-1695605118408-b31785f23152?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-      rightImageUrl:
-        'https://images.unsplash.com/photo-1693711836001-99859bb7185a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3NXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-      debug: true,
-      originalPosition: 33
-    });
+    const split = new Split(
+      {
+        id: 'idxMngrDM',
+        leftImageUrl:
+          'https://images.unsplash.com/photo-1695605118408-b31785f23152?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyNHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+        rightImageUrl:
+          'https://images.unsplash.com/photo-1693711836001-99859bb7185a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw3NXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+        debug: true,
+        originalPosition: 33,
+        onClick
+      },
+      { width: '44%', left: '42%', height: '90%', top: '5%' }
+    );
     root.appendChild(split);
   }
 }

@@ -1,11 +1,10 @@
 import { getClientXY } from '../utils/helper';
 import { createDiv } from '../utils/divMaker';
+import { ComponentBaseType } from '../types';
 
-interface SplitType {
-  id: string;
+interface SplitType extends ComponentBaseType {
   leftImageUrl: string;
   rightImageUrl: string;
-  debug?: boolean;
   originalPosition?: number;
 }
 
@@ -13,7 +12,7 @@ export class Split extends HTMLElement {
   constructor(props: SplitType, style: any = {}) {
     super();
 
-    const { id, leftImageUrl, rightImageUrl, debug = false, originalPosition = 50 } = props;
+    const { id, leftImageUrl, rightImageUrl, debug = false, originalPosition = 50, redirectUrl, onClick } = props;
 
     this.setAttribute('id', id);
     const actualStyle = {
@@ -71,6 +70,8 @@ export class Split extends HTMLElement {
       handle.style.left = `${x - handleWidth / 2}px`;
       divLeft.style.width = getClientXY(e, this.getBoundingClientRect()).x + 'px';
     });
+
+    this.addEventListener('click', () => onClick(redirectUrl));
   }
 }
 
