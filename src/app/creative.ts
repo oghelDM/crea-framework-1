@@ -1,6 +1,7 @@
 import { Elastic, Quad } from 'gsap';
 import { Split } from '../components/Split';
 import { ImageDM } from '../components/image';
+import { Countdown } from '../components/Countdown';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
@@ -90,8 +91,24 @@ export class Creative {
         originalPosition: 33,
         onClick
       },
-      { width: '44%', left: '42%', height: '90%', top: '5%' }
+      { width: '44%', left: '42%', height: '90%', top: '5%', fontSize: '6.5vi', lineHeight: 1.1, color: '#ffffff' }
     );
     root.appendChild(split);
+
+    // Countdown component
+    const countdown = new Countdown(
+      {
+        id: 'countdownDM',
+        debug: true,
+        date: 'Oct 31, 2023 09:00:00',
+        isOverMessage: 'in your cinemas',
+        onClick,
+        separator: '   ',
+        fontUrl:
+          'https://statics.dmcdn.net/d/PRODUCTION/Entertainement_DisneyPlus_Miraculous_0923_Skins_Split_x_3_and_Countdown/assets/ImpasseBold.ttf'
+      },
+      { left: '0%', width: '70%', top: '0%' }
+    );
+    root.appendChild(countdown);
   }
 }
