@@ -5,6 +5,7 @@ import { Countdown } from '../components/Countdown';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
+import { Cuber } from '../components/cuber';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -48,36 +49,36 @@ export class Creative {
     // root.appendChild(idxMgr);
 
     // CarouselBasic component
-    const carouselBasic = new CarouselBasic(
-      {
-        id: 'carouselBasicDM',
-        products: [
-          'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-          'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-          'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-          'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-          'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
-        ],
-        startIndex: 0,
-        focusedElementWidth: 40,
-        unfocusedElementWidth: 21,
-        focusedElementHeight: 80,
-        unfocusedElementHeight: 61,
-        // debug: true,
-        easing: Quad.easeOut,
-        // onIndexChange: (index) => console.log(`creative onIndexChange: ${index}`),
-        autoPlay: true,
-        onClick,
-        gap: 2,
-        horizontalAlign: HORIZONTAL_ALIGN.CENTER,
-        verticalAlign: VERTICAL_ALIGN.CENTER,
-        focusedElementOpacity: 1,
-        unfocusedElementOpacity: 0.6
-        // isVertical: true
-      },
-      { width: '60%', right: '20%' }
-    );
-    root.appendChild(carouselBasic);
+    // const carouselBasic = new CarouselBasic(
+    //   {
+    //     id: 'carouselBasicDM',
+    //     products: [
+    //       'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //       'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //       'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //       'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //       'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
+    //     ],
+    //     startIndex: 0,
+    //     focusedElementWidth: 40,
+    //     unfocusedElementWidth: 21,
+    //     focusedElementHeight: 80,
+    //     unfocusedElementHeight: 61,
+    //     debug: true,
+    //     easing: Quad.easeOut,
+    //     // onIndexChange: (index) => console.log(`creative onIndexChange: ${index}`),
+    //     autoPlay: true,
+    //     onClick,
+    //     gap: 2,
+    //     horizontalAlign: HORIZONTAL_ALIGN.CENTER,
+    //     verticalAlign: VERTICAL_ALIGN.CENTER,
+    //     focusedElementOpacity: 1,
+    //     unfocusedElementOpacity: 0.6
+    //     // isVertical: true
+    //   },
+    //   { width: '60%', right: '20%' }
+    // );
+    // root.appendChild(carouselBasic);
 
     // Split component
     const split = new Split(
@@ -107,8 +108,63 @@ export class Creative {
         fontUrl:
           'https://statics.dmcdn.net/d/PRODUCTION/2023/Entertainement_DisneyPlus_Miraculous_0923_Skins_Split_x_3_and_Countdown/assets/V2/ImpasseBold.ttf'
       },
-      { left: '0%', width: '70%', top: '0%' }
+      { left: '3%', width: '70%', bottom: '0%' }
     );
-    root.appendChild(countdown);
+    // root.appendChild(countdown);
+
+    // Defonce component
+    const test = new Test(
+      {
+        id: 'testDM',
+        debug: true,
+        // maskUrl: 'images/nike-3-logo.svg',
+        maskUrl: 'images/chanel.svg',
+        // maskUrl:
+        //   'data:image/svg+xml;utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cmask id="mask" maskContentUnits="objectBoundingBox"%3E%3Crect width="1" height="1" fill="url(%23gradient)"/%3E%3ClinearGradient x2="0" y2="1" id="gradient"%3E%3Cstop offset="25%" stop-color="white" /%3E%3Cstop offset="50%" stop-color="black" /%3E%3C/linearGradient%3E%3C/mask%3E%3C/defs%3E%3C/svg%3E#mask',
+        onClick
+      },
+      {
+        // left: '3%',
+        // width: '100%',
+        // bottom: '0%',
+        backgroundImage:
+          'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+      }
+    );
+    // root.appendChild(test);
+
+    // Cuber component
+    const cuber = new Cuber(
+      {
+        id: 'cuberDM',
+        debug: true,
+        products: [
+          'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
+        ],
+        focusedElementWidth: 40,
+        focusedElementHeight: 80,
+        faceWidth: 50,
+        faceHeight: 30,
+        faceLeft: 25,
+        faceBottom: 10,
+        onClick: () => console.log('cuber click'),
+        parent: root
+      },
+      {
+        backgroundImage:
+          'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+      }
+    );
+    root.appendChild(cuber);
   }
 }

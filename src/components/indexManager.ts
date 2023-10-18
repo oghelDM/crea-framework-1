@@ -137,7 +137,7 @@ export class IndexManager extends HTMLElement {
     this.onIndexChange(this.currentIndex);
     if (this.debug) {
       this.debugCurrentIndexDiv.innerText = this.currentIndex.toFixed(2);
-      this.debugElementDiv.style.left = `${this.currentIndex * this.focusedElementWidth}%`;
+      this.debugElementDiv.style.left = `${-1 * this.currentIndex * this.focusedElementWidth}%`;
     }
   }
 
