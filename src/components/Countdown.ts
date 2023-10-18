@@ -1,10 +1,12 @@
 import { ComponentBaseType } from '../types';
+import { createDiv } from '../utils/divMaker';
 
 interface CountdownType extends ComponentBaseType {
   date: string; // date in the format: 'Oct 21, 2023 09:00:00'
   isOverMessage?: string; // message to be displayed when the countdown is over. default is 00 00 00 00
   fontUrl?: string; // font url (.ttf) to use to display the countdown
   separator?: string; // character to separate the countdown numbers. default is ␣ (space)
+  gap: number; // horizontal gap between days/hours/minutes/seconds, in percent
 }
 
 export class Countdown extends HTMLElement {
@@ -12,36 +14,52 @@ export class Countdown extends HTMLElement {
   private last = 0; // timestamp of the last checkUpdate() call
   private dateMilliseconds; // date in milliseconds
   private isOverMessage;
-  private separator;
+  private dayDiv: HTMLElement;
+  private hourDiv: HTMLElement;
+  private minDiv: HTMLElement;
+  private secDiv: HTMLElement;
 
   constructor(props: CountdownType, style: any = {}) {
     super();
 
-    const { id, date, isOverMessage, fontUrl, debug, onClick, redirectUrl, separator = ' ' } = props;
+    const { id, date, isOverMessage, fontUrl, debug, onClick, redirectUrl, gap = 0 } = props;
 
-    this.separator = separator;
     this.isOverMessage = isOverMessage;
     this.dateMilliseconds = new Date(date).getTime();
 
     this.setAttribute('id', id);
     const actualStyle = {
-      display: 'block',
       position: 'absolute',
-      width: '100%',
       height: '3.5vi',
       lineHeight: '3.5vi',
       fontSize: '3.5vi',
-      opacity: 1,
+      width: '100%',
       backgroundColor: debug ? '#00ffff88' : 'unset',
-      textAlign: 'center',
-      cursor: 'default',
-      whiteSpace: 'pre', // preserve multiple spaces if needed
 
       ...style
     };
     for (const [key, value] of Object.entries(actualStyle)) {
       this.style[key] = value;
     }
+
+    [this.dayDiv, this.hourDiv, this.minDiv, this.secDiv] = new Array(4).fill(0).map((_, i) => {
+      const div = createDiv(`countdown-${i}`, {
+        backgroundColor: debug ? '#ffffff88' : 'unset',
+        position: 'absolute',
+        left: `${i * gap}%`,
+        height: 'inherit',
+        lineHeight: 'inherit',
+        fontSize: 'inherit',
+        textAlign: 'center',
+        cursor: 'default',
+        pointerEvents: 'none',
+        userSelect: 'none',
+        transform: 'translate(-50%)',
+        fontFamily: 'inherit'
+      });
+      this.appendChild(div);
+      return div;
+    });
 
     this.style.fontFamily = 'sans-serif';
     if (fontUrl) {
@@ -89,7 +107,10 @@ export class Countdown extends HTMLElement {
     const textMinute = Math.floor((delta % hour) / minute).toLocaleString(locales, options);
     const textSecond = Math.floor((delta % minute) / second).toLocaleString(locales, options);
 
-    this.innerHTML = `${textDay}${this.separator}${textHour}${this.separator}${textMinute}${this.separator}${textSecond}`;
+    this.dayDiv.innerHTML = textDay;
+    this.hourDiv.innerHTML = textHour;
+    this.minDiv.innerHTML = textMinute;
+    this.secDiv.innerHTML = textSecond;
   };
 }
 

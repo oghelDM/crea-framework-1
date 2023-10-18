@@ -92,12 +92,19 @@ class VPAIDVideoPlayer {
     }
   };
 
-  clickAdCustom = (productUrl, productName, clientTracking) => {
-    let url = productUrl;
-    // trackPixel(clientTracking);
+  // clickAdCustom = (productUrl, productName, clientTracking) => {
+  //   let url = productUrl;
+  //   // trackPixel(clientTracking);
 
-    if ('AdClickThru' in this.eventsCallbacks) {
-      this.eventsCallbacks['AdClickThru'](url, '0', true);
+  //   if ('AdClickThru' in this.eventsCallbacks) {
+  //     this.eventsCallbacks['AdClickThru'](url, '0', true);
+  //   }
+  // };
+
+  trackPixel = (url: string) => {
+    if (typeof window !== 'undefined' && window !== null) {
+      const i = new Image();
+      i.src = url;
     }
   };
 
@@ -295,7 +302,6 @@ class VPAIDVideoPlayer {
    * Skips the ad.
    */
   skipAd = () => {
-    this.log('skipAd');
     var skippableState = this.attributes['skippableState'];
     if (skippableState) {
       this.callEvent('AdSkipped');
@@ -382,8 +388,8 @@ class VPAIDVideoPlayer {
    * @param {number} value The volume in percentage.
    */
   setAdVolume = (value) => {
-    this.attributes['volume'] = value;
     // this.log("setAdVolume " + value);
+    this.attributes['volume'] = value;
     this.callEvent('AdVolumeChange');
   };
 

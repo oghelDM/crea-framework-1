@@ -1,6 +1,6 @@
+import { ComponentBaseType } from '../types';
 import { getClientXY } from '../utils/helper';
 import { createDiv } from '../utils/divMaker';
-import { ComponentBaseType } from '../types';
 
 interface SplitType extends ComponentBaseType {
   leftImageUrl: string;
@@ -58,8 +58,7 @@ export class Split extends HTMLElement {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'contain',
-      backgroundImage: `url("https://statics.dmcdn.net/d/vpaid/split/assets/split.png")`,
-      zIndex: 5
+      backgroundImage: `url("https://statics.dmcdn.net/d/vpaid/split/assets/split.png")`
     });
     handle.style.left = `calc(${originalPosition}% - ${handleWidth / 2}px)`;
     this.appendChild(handle);
