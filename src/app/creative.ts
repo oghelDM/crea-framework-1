@@ -5,6 +5,7 @@ import { Countdown } from '../components/Countdown';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
+import { Defonce } from '../components/defonce';
 import { Cuber } from '../components/cuber';
 
 interface CreativeProps {
@@ -113,9 +114,9 @@ export class Creative {
     // root.appendChild(countdown);
 
     // Defonce component
-    const test = new Test(
+    const defonce = new Defonce(
       {
-        id: 'testDM',
+        id: 'defonceDM',
         debug: true,
         // maskUrl: 'images/nike-3-logo.svg',
         maskUrl: 'images/chanel.svg',
