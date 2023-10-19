@@ -2,8 +2,6 @@ import { IndexManager, IndexManagerType } from './indexManager';
 
 interface CuberType extends IndexManagerType {
   products: string[]; // image elements
-  faceWidth?: number; // the face width relative to the whole component, in percent
-  faceHeight?: number; // the face height relative to the whole component, in percent
   parent: HTMLElement; // the parent DOM element (usually the creative root), necessary to compute the faces dimensions
   perspective?: number; // 3D perspective
   faceLeft?: number; // same as the usual css left property for the focused face
@@ -25,15 +23,12 @@ export class Cuber extends IndexManager {
     const {
       id,
       debug = false,
-      onClick,
       products,
-      faceWidth = 100,
-      faceHeight = 100,
       parent,
       perspective = 800,
-      faceLeft = (100 - faceWidth) / 2,
+      faceLeft = (100 - this.focusedElementHeight) / 2,
       faceRight,
-      faceTop = (100 - faceHeight) / 2,
+      faceTop = (100 - this.focusedElementHeight) / 2,
       faceBottom,
       perspectiveOrigin = '50%'
     } = props;
@@ -57,7 +52,7 @@ export class Cuber extends IndexManager {
 
     // width, in pixels, of the cuber's parent element
     const { width } = parent.getBoundingClientRect();
-    const faceWidthPx = (width * faceWidth) / 100; // width of the focused face, in pixels
+    const faceWidthPx = (width * this.focusedElementWidth) / 100; // width of the focused face, in pixels
 
     this.nbImages = products.length;
     this.distCenter = faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
@@ -67,8 +62,8 @@ export class Cuber extends IndexManager {
     container.id = 'id-container';
     container.style.position = 'absolute';
     container.style.zIndex = '3000000';
-    container.style.width = `${faceWidth}%`;
-    container.style.height = `${faceHeight}%`;
+    container.style.width = `${this.focusedElementWidth}%`;
+    container.style.height = `${this.focusedElementHeight}%`;
     container.style.perspective = `${perspective}px`;
     container.style.perspectiveOrigin = perspectiveOrigin;
     container.style.alignItems = 'center';

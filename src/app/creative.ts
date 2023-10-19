@@ -127,19 +127,17 @@ export class Creative {
         ],
         focusedElementWidth: 40,
         focusedElementHeight: 80,
-        faceWidth: 50,
-        faceHeight: 30,
-        faceLeft: 25,
+        faceLeft: 30,
         faceBottom: 10,
         onClick: () => console.log('cuber click'),
         parent: root
       },
       {
-        backgroundImage:
-          'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
+        // backgroundImage:
+        //   'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
+        // backgroundPosition: 'center',
+        // backgroundRepeat: 'no-repeat',
+        // backgroundSize: 'cover'
       }
     );
     root.appendChild(cuber);
