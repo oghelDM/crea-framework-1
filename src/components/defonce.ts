@@ -52,6 +52,7 @@ export class Defonce extends HTMLElement {
         this.style.maskSize = `${this.toto}%`;
         this.style.webkitMaskSize = `${this.toto}%`;
         const q = `rgba(0,0,0,${(this.toto - 100) / 100})`;
+        // allows a smooth fade-in of the whole div
         if (this.toto > 100) {
           this.style.maskImage = `url(${this.maskUrl}), linear-gradient(${q} 0%, ${q} 100%)`;
           this.style.webkitMaskImage = `url(${this.maskUrl}), linear-gradient(${q} 0%, ${q} 100%)`;

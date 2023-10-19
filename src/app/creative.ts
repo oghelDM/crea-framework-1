@@ -95,7 +95,7 @@ export class Creative {
       },
       { width: '44%', left: '42%', height: '90%', top: '5%', fontSize: '6.5vi', lineHeight: 1.1, color: '#ffffff' }
     );
-    root.appendChild(split);
+    // root.appendChild(split);
 
     // Countdown component
     const countdown = new Countdown(
@@ -120,8 +120,6 @@ export class Creative {
         debug: true,
         // maskUrl: 'images/nike-3-logo.svg',
         maskUrl: 'images/chanel.svg',
-        // maskUrl:
-        //   'data:image/svg+xml;utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3Cdefs%3E%3Cmask id="mask" maskContentUnits="objectBoundingBox"%3E%3Crect width="1" height="1" fill="url(%23gradient)"/%3E%3ClinearGradient x2="0" y2="1" id="gradient"%3E%3Cstop offset="25%" stop-color="white" /%3E%3Cstop offset="50%" stop-color="black" /%3E%3C/linearGradient%3E%3C/mask%3E%3C/defs%3E%3C/svg%3E#mask',
         onClick
       },
       {
@@ -135,13 +133,13 @@ export class Creative {
         backgroundSize: 'cover'
       }
     );
-    // root.appendChild(test);
+    root.appendChild(defonce);
 
     // Cuber component
     const cuber = new Cuber(
       {
         id: 'cuberDM',
-        debug: true,
+        // debug: true,
         products: [
           'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
           'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
@@ -167,5 +165,24 @@ export class Creative {
       }
     );
     root.appendChild(cuber);
+
+    const displacementMap = document.querySelector('feDisplacementMap') as SVGFEDisplacementMapElement;
+    const filterImage = document.querySelector('feimage') as SVGFEImageElement;
+    console.log('filter: ', displacementMap);
+    const map = (v, a1, b1, a2, b2) => a2 + ((b2 - a2) * (v - a1)) / (b1 - a1);
+
+    window.addEventListener('mousemove', ({ screenX, screenY }) => {
+      const { innerWidth } = window;
+      const { width, height } = root.getBoundingClientRect(); // container width and height in pixels
+      console.log(screenX, screenY, `${map(screenX, 0, innerWidth, 0, 200)}`);
+      // displacementMap.scale.baseVal = map(screenX, 0, innerWidth, 200, 0);
+      displacementMap.setAttribute('scale', `${map(screenX, 0, innerWidth, 200, 0)}`); //'200'); //
+      const filterWidth = map(screenX, 0, innerWidth, width, 4 * width);
+      const filterHeight = map(screenX, 0, innerWidth, height, 4 * height);
+      filterImage.setAttribute('width', `${filterWidth}px`);
+      filterImage.setAttribute('height', `${filterHeight}px`);
+      filterImage.setAttribute('x', `${width / 2 - filterWidth / 2}px`);
+      filterImage.setAttribute('y', `${height / 2 - filterHeight / 2}px`);
+    });
   }
 }
