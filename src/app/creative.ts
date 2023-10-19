@@ -5,7 +5,7 @@ import { Countdown } from '../components/Countdown';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
-import { Defonce } from '../components/defonce';
+import { Defonce } from '../effects/defonce';
 import { Cuber } from '../components/cuber';
 
 interface CreativeProps {
@@ -113,28 +113,6 @@ export class Creative {
     );
     // root.appendChild(countdown);
 
-    // Defonce component
-    const defonce = new Defonce(
-      {
-        id: 'defonceDM',
-        debug: true,
-        // maskUrl: 'images/nike-3-logo.svg',
-        maskUrl: 'images/chanel.svg',
-        onClick
-      },
-      {
-        // left: '3%',
-        // width: '100%',
-        // bottom: '0%',
-        backgroundImage:
-          'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
-      }
-    );
-    root.appendChild(defonce);
-
     // Cuber component
     const cuber = new Cuber(
       {
@@ -165,6 +143,13 @@ export class Creative {
       }
     );
     root.appendChild(cuber);
+
+    // Defonce effect
+    const defonce = new Defonce({
+      targetElement: cuber,
+      // debug: true,
+      maskUrl: 'images/chanel.svg'
+    });
 
     const displacementMap = document.querySelector('feDisplacementMap') as SVGFEDisplacementMapElement;
     const filterImage = document.querySelector('feimage') as SVGFEImageElement;
