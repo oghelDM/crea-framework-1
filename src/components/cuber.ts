@@ -14,7 +14,7 @@ interface CuberType extends IndexManagerType {
 export class Cuber extends IndexManager {
   container: HTMLElement;
   cube: HTMLElement;
-  distCenter: number;
+  faces: HTMLElement[];
   nbImages: number;
 
   constructor(props: CuberType, style: any = {}) {
@@ -39,6 +39,8 @@ export class Cuber extends IndexManager {
       position: 'absolute',
       width: '100%',
       height: '100%',
+      top: 0,
+      left: 0,
       opacity: 1,
       backgroundColor: debug ? '#00ff0088' : 'unset',
       overflow: 'hidden',
@@ -50,12 +52,11 @@ export class Cuber extends IndexManager {
       this.style[key] = value;
     }
 
-    // width, in pixels, of the cuber's parent element
-    const { width } = parent.getBoundingClientRect();
-    const faceWidthPx = (width * this.focusedElementWidth) / 100; // width of the focused face, in pixels
-
     this.nbImages = products.length;
-    this.distCenter = faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
+
+    // width, in pixels, of the focused face
+    let faceWidthPx = (parent.getBoundingClientRect().width * this.focusedElementWidth) / 100;
+    let distCenter = faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
 
     // faces initialization
     const container = document.createElement('div');
@@ -86,7 +87,7 @@ export class Cuber extends IndexManager {
     zout.style.position = 'relative';
     zout.style.width = '100%';
     zout.style.height = '100%';
-    zout.style.transform = `translateZ(${-this.distCenter}px)`;
+    zout.style.transform = `translateZ(${-distCenter}px)`;
     zout.style.transformStyle = 'preserve-3d';
     container.appendChild(zout);
 
@@ -101,21 +102,32 @@ export class Cuber extends IndexManager {
     this.cube = cube;
     zout.appendChild(cube);
 
-    products.forEach((product, i) => {
+    this.faces = products.map((product, i) => {
       const face = document.createElement('div');
-      cube.appendChild(face);
-      face.id = 'id-face-' + i;
+      face.id = `id-face-${i}`;
       face.style.position = 'absolute';
       face.style.backgroundColor = 'pink';
       face.style.width = '100%';
       face.style.height = '100%';
       face.style.border = '1px solid black';
-      face.style.transform = `rotateY(${(i * 360) / this.nbImages}deg) translateZ(${this.distCenter}px)`;
+      face.style.transform = `rotateY(${(i * 360) / this.nbImages}deg) translateZ(${distCenter}px)`;
 
       face.style.backgroundImage = `url(${product})`;
       face.style.backgroundPosition = 'center';
       face.style.backgroundRepeat = 'no-repeat';
       face.style.backgroundSize = 'cover';
+      cube.appendChild(face);
+
+      return face;
+    });
+
+    window.addEventListener('resize', () => {
+      faceWidthPx = (parent.getBoundingClientRect().width * this.focusedElementWidth) / 100;
+      distCenter = faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
+      zout.style.transform = `translateZ(${-distCenter}px)`;
+      this.faces.forEach(
+        (face, i) => (face.style.transform = `rotateY(${(i * 360) / this.nbImages}deg) translateZ(${distCenter}px)`)
+      );
     });
   }
 
