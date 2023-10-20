@@ -16,3 +16,9 @@ export interface ComponentBaseType {
   redirectUrl?: string; // main url redirection
   onClick: (url?: string) => void; // onClick callback
 }
+
+export interface CreativeProps {
+  onClick: (url?: string) => void;
+}
+
+export type CreativeHandler = (root: HTMLElement, { onClick }: CreativeProps) => void

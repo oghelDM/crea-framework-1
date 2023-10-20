@@ -1,12 +1,12 @@
 import { Elastic, Quad } from 'gsap';
-import { Split } from '../components/Split';
-import { ImageDM } from '../components/image';
-import { Countdown } from '../components/Countdown';
-import { IndexManager } from '../components/indexManager';
-import { CarouselBasic } from '../components/carouselBasic';
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
-import { Defonce } from '../effects/defonce';
-import { Cuber } from '../components/cuber';
+import { Split } from '@/components/Split';
+import { ImageDM } from '@/components/image';
+import { Countdown } from '@/components/Countdown';
+import { IndexManager } from '@/components/indexManager';
+import { CarouselBasic } from '@/components/carouselBasic';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '@/types';
+import { Defonce } from '@/effects/defonce';
+import { Cuber } from '@/components/cuber';
 
 interface CreativeProps {
   onClick: (url?: string) => void;

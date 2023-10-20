@@ -136,3 +136,17 @@ This project is possible thanks to the contributors.
 - **[nuxt:](https://github.com/CKGrafico/Frontend-Boilerplates/tree/nuxt#logos)** **Nuxt** example using Nuxt and TypeScript. <img src="https://raw.githubusercontent.com/CKGrafico/Frontend-Boilerplates/docs/resources/techs/nuxt.png" align="right" width="35" title="Nuxt">
 
 - **[node-ts:](https://github.com/CKGrafico/Frontend-Boilerplates/tree/node-ts#logos)** **Backend and TypeScript** example with SCSS and Nodejs. <img src="https://raw.githubusercontent.com/CKGrafico/Frontend-Boilerplates/docs/resources/techs/nodets.png" align="right" width="35" title="Node with TypeScript">
+
+
+
+```
+npm run start --target=./creatives/kinder/2023/xmas/creative.ts
+npm run start --target=./creatives/kinder/2023/xmas/creative.ts -- --port=4001
+```
+
+*target* must be the entry file
+*port* is optionnal, default is 4000
+
+```
+npm run build --target=./creatives/kinder/2023/xmas/creative.ts
+```

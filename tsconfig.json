@@ -10,6 +10,9 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/app/*"],
+      "@app": ["./src/app/app.ts"],
+      "@/*": ["./src/*"],
+      "@creatives/*": ["./creatives/*"],
       "test/*": ["./test/*"]
     },
     "module": "esnext",

@@ -4,8 +4,8 @@
   "license": "MIT",
   "version": "3.0.1",
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack serve --hot --open --mode development",
+    "build": "webpack --mode production --entry=$npm_config_target",
+    "start": "webpack serve --hot --open --mode development --port=4000 --entry=$npm_config_target",
     "test": "jest",
     "lint": "npm run lint:scripts && npm run lint:styles && npm run lint:editor",
     "lint:scripts": "eslint --fix \"./app/**/*.js\"",
@@ -68,6 +68,7 @@
     "stylelint-config-standard": "^20.0.0",
     "stylelint-prettier": "^1.1.2",
     "ts-loader": "^8.0.17",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
     "typescript": "^4.1.5",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^5.22.0",

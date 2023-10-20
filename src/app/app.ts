@@ -1,19 +1,13 @@
-import { Creative } from './creative';
+import { CreativeHandler } from '@/types';
 import { quartileEvents } from '../constants';
 import { createDiv } from '../utils/divMaker';
 import { mobileCheck, updateDisplay } from '../utils/helper';
 
-(window as any).getVPAIDAd = () => {
-  console.log('getVPAIDAd');
-  return new VPAIDVideoPlayer();
-};
-
-class VPAIDVideoPlayer {
+export class VPAIDVideoPlayer {
   attributes: any = {}; // TODO: strongly type
   slot: HTMLElement;
   videoSlot: HTMLVideoElement;
   eventsCallbacks: any = {}; // TODO: strongly type
-  creative: Creative;
 
   // TODO: clean this up
   nextQuartileIndex = 0;
@@ -22,7 +16,7 @@ class VPAIDVideoPlayer {
   // A container dedicated to the displayed elements
   creativeContent = null;
 
-  constructor() {
+  constructor(private creative: CreativeHandler) {
     console.log('VPAID constructor');
   }
 
@@ -219,7 +213,7 @@ class VPAIDVideoPlayer {
     ////////////////////////////////////////////////////////////////////
     ///////////////////// DM ad instanciation //////////////////////////
     ////////////////////////////////////////////////////////////////////
-    this.creative = new Creative(this.creativeContent, { onClick: (url?: string) => this.clickAd(url) });
+    this.creative(this.creativeContent, { onClick: (url?: string) => this.clickAd(url) });
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

@@ -1,6 +1,7 @@
 const path = require('path');
 const rules = require('require.all')('./tasks/rules');
 const plugins = require('require.all')('./tasks/plugins');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = (options) => {
   const environment = options.WEBPACK_BUNDLE ? 'production' : 'development';
@@ -10,9 +11,9 @@ module.exports = (options) => {
 
   return {
     mode: environment,
-    entry: {
-      app: path.resolve(__dirname, 'src/app/app.ts')
-    },
+    // entry: {
+    //   app: path.resolve(__dirname, 'src/app/app.ts')
+    // },
     output: {
       filename: '[name].js',
       iife: false
@@ -23,7 +24,7 @@ module.exports = (options) => {
     plugins: [plugins.html, plugins.images, plugins.extractStyles, plugins.purgeStyles],
     devServer: {
       open: true,
-      port: 4000,
+      // port: 4000,
       https: false,
       hot: true,
       historyApiFallback: true,
@@ -47,6 +48,7 @@ module.exports = (options) => {
     },
     resolve: {
       extensions: ['.ts', '.js'],
+      plugins: [new TsconfigPathsPlugin({/* options: see below */})],
       alias: {
         styles: path.resolve(__dirname, 'src/styles'),
         assets: path.resolve(__dirname, 'src/assets'),
