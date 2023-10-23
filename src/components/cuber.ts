@@ -41,7 +41,6 @@ export class Cuber extends IndexManager {
       height: '100%',
       top: 0,
       left: 0,
-      opacity: 1,
       backgroundColor: debug ? '#00ff0088' : 'unset',
       overflow: 'hidden',
 

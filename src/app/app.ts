@@ -2,6 +2,7 @@ import { Creative } from './creative';
 import { quartileEvents } from '../constants';
 import { createDiv } from '../utils/divMaker';
 import { mobileCheck, updateDisplay } from '../utils/helper';
+import { svgContent } from 'src/components/displacementMaps/svgContent';
 
 (window as any).getVPAIDAd = () => {
   console.log('getVPAIDAd');
@@ -196,7 +197,7 @@ class VPAIDVideoPlayer {
     });
 
     this.creativeContent = createDiv('creativeContent', {
-      position: 'relative',
+      position: 'absolute',
       overflow: 'hidden',
       aspectRatio: '16 / 9',
       margin: 'auto'

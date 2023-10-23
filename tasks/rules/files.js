@@ -1,7 +1,7 @@
 module.exports = () => {
   return [
     {
-      test: /\.(png|jpg|gif)$/,
+      test: /\.(png|jpg|gif|svg)$/,
       use: [
         {
           loader: 'file-loader',
@@ -14,7 +14,7 @@ module.exports = () => {
       ]
     },
     {
-      test: /\.(woff(2)?|ttf|eot|svg)$/,
+      test: /\.(woff(2)?|ttf|eot)$/,
       use: [
         {
           loader: 'file-loader',

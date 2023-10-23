@@ -7,6 +7,8 @@ import { CarouselBasic } from '../components/carouselBasic';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
 import { Defonce } from '../effects/defonce';
 import { Cuber } from '../components/cuber';
+import { CrossFade } from '../components/displacementMaps/crossFade';
+import { FadeIn } from '../components/displacementMaps/fadeIn';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -130,9 +132,11 @@ export class Creative {
         faceLeft: 30,
         faceBottom: 10,
         onClick: () => console.log('cuber click'),
-        parent: root
+        parent: root,
+        autoPlay: true
       },
       {
+        zIndex: 333
         // backgroundImage:
         //   'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
         // backgroundPosition: 'center',
@@ -140,32 +144,32 @@ export class Creative {
         // backgroundSize: 'cover'
       }
     );
-    root.appendChild(cuber);
+    // root.appendChild(cuber);
 
     // Defonce effect
-    const defonce = new Defonce({
-      targetElement: cuber,
-      // debug: true,
-      maskUrl: 'images/chanel.svg'
-    });
+    // const defonce = new Defonce({
+    //   targetElement: cuber,
+    //   // debug: true,
+    //   maskUrl: 'images/chanel.svg'
+    // });
 
-    const displacementMap = document.querySelector('feDisplacementMap') as SVGFEDisplacementMapElement;
-    const filterImage = document.querySelector('feimage') as SVGFEImageElement;
-    console.log('filter: ', displacementMap);
-    const map = (v, a1, b1, a2, b2) => a2 + ((b2 - a2) * (v - a1)) / (b1 - a1);
+    // DisplacementMap effect
+    const displacementMap = new CrossFade({
+      parent: root,
+      id: 'displacementMapDM',
 
-    window.addEventListener('mousemove', ({ screenX, screenY }) => {
-      const { innerWidth } = window;
-      const { width, height } = root.getBoundingClientRect(); // container width and height in pixels
-      console.log(screenX, screenY, `${map(screenX, 0, innerWidth, 0, 200)}`);
-      // displacementMap.scale.baseVal = map(screenX, 0, innerWidth, 200, 0);
-      displacementMap.setAttribute('scale', `${map(screenX, 0, innerWidth, 200, 0)}`); //'200'); //
-      const filterWidth = map(screenX, 0, innerWidth, width, 4 * width);
-      const filterHeight = map(screenX, 0, innerWidth, height, 4 * height);
-      filterImage.setAttribute('width', `${filterWidth}px`);
-      filterImage.setAttribute('height', `${filterHeight}px`);
-      filterImage.setAttribute('x', `${width / 2 - filterWidth / 2}px`);
-      filterImage.setAttribute('y', `${height / 2 - filterHeight / 2}px`);
+      // 'images/toto-in.png',
+      // 'images/toto-noise.png',
+      // 'images/IMGP3659.jpg',
+      displacementMapUrl: 'images/toto-in.png',
+      imageUrl:
+        'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      image1Url: 'images/IMGP3659.jpg',
+      // 'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      image2Url:
+        'https://images.unsplash.com/photo-1697486021635-0d6b5fd69188?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      onClick
     });
+    root.appendChild(displacementMap);
   }
 }
