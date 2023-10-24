@@ -1,8 +1,7 @@
 import { Creative } from './creative';
 import { quartileEvents } from '../constants';
 import { createDiv } from '../utils/divMaker';
-import { mobileCheck, updateDisplay } from '../utils/helper';
-import { svgContent } from 'src/components/displacementMaps/svgContent';
+import { mobileCheck, pickVideo, updateDisplay } from '../utils/helper';
 
 (window as any).getVPAIDAd = () => {
   console.log('getVPAIDAd');
@@ -61,15 +60,15 @@ class VPAIDVideoPlayer {
       }
     ];
 
-    // const selectedMedia = pickVideo(videos, this.videoSlot);
+    const selectedMedia = pickVideo(videos, this.videoSlot);
 
-    // if (!selectedMedia) {
-    //   // Unable to find a source video.
-    //   console.error('video source was not found : check media mimetype and valid URL');
-    //   this.callEvent('AdError');
-    // } else {
-    //   this.videoSlot.setAttribute('src', selectedMedia.url);
-    // }
+    if (!selectedMedia) {
+      // Unable to find a source video.
+      console.error('video source was not found : check media mimetype and valid URL');
+      this.callEvent('AdError');
+    } else {
+      this.videoSlot.setAttribute('src', selectedMedia.url);
+    }
   };
 
   // TODO?
@@ -168,7 +167,10 @@ class VPAIDVideoPlayer {
    * @param {string} playerVPAIDVersion
    * @return {string}
    */
-  handshakeVersion = (_) => '2.0';
+  handshakeVersion = (_) => {
+    console.log('test handshakeVersion');
+    ('2.0');
+  };
 
   /**
    * Initializes all attributes in the ad. The ad will not start until startAd is called.
@@ -197,7 +199,7 @@ class VPAIDVideoPlayer {
     });
 
     this.creativeContent = createDiv('creativeContent', {
-      position: 'absolute',
+      position: 'relative',
       overflow: 'hidden',
       aspectRatio: '16 / 9',
       margin: 'auto'
