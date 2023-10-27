@@ -13,6 +13,7 @@ export interface IndexManagerType extends ComponentBaseType {
   autoPlay?: boolean;
   speedCoefficient?: number;
   isVertical?: boolean; // whether the user interaction should be vertical or not
+  onClick: (url: string) => void;
 }
 
 export class IndexManager extends HTMLElement {

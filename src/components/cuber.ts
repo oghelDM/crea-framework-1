@@ -53,10 +53,6 @@ export class Cuber extends IndexManager {
 
     this.nbImages = products.length;
 
-    // width, in pixels, of the focused face
-    let faceWidthPx = (parent.getBoundingClientRect().width * this.focusedElementWidth) / 100;
-    let distCenter = faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
-
     // faces initialization
     const container = document.createElement('div');
     container.id = 'id-container';
@@ -81,12 +77,13 @@ export class Cuber extends IndexManager {
     this.container = container;
     this.appendChild(container);
 
+    let distToCenter = this.getDistToCenter(parent);
     const zout = document.createElement('div');
     zout.id = 'id-zout';
     zout.style.position = 'relative';
     zout.style.width = '100%';
     zout.style.height = '100%';
-    zout.style.transform = `translateZ(${-distCenter}px)`;
+    zout.style.transform = `translateZ(${-distToCenter}px)`;
     zout.style.transformStyle = 'preserve-3d';
     container.appendChild(zout);
 
@@ -109,7 +106,9 @@ export class Cuber extends IndexManager {
       face.style.width = '100%';
       face.style.height = '100%';
       face.style.border = '1px solid black';
-      face.style.transform = `rotateY(${(i * 360) / this.nbImages}deg) translateZ(${distCenter}px)`;
+      face.style.transform = `rotate${this.isVertical ? 'X' : 'Y'}(${
+        (i * 360) / this.nbImages
+      }deg) translateZ(${distToCenter}px)`;
 
       face.style.backgroundImage = `url(${product})`;
       face.style.backgroundPosition = 'center';
@@ -121,19 +120,34 @@ export class Cuber extends IndexManager {
     });
 
     window.addEventListener('resize', () => {
-      faceWidthPx = (parent.getBoundingClientRect().width * this.focusedElementWidth) / 100;
-      distCenter = faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
-      zout.style.transform = `translateZ(${-distCenter}px)`;
+      distToCenter = this.getDistToCenter(parent);
+      zout.style.transform = `translateZ(${-distToCenter}px)`;
       this.faces.forEach(
-        (face, i) => (face.style.transform = `rotateY(${(i * 360) / this.nbImages}deg) translateZ(${distCenter}px)`)
+        (face, i) =>
+          (face.style.transform = `rotate${this.isVertical ? 'X' : 'Y'}(${
+            (i * 360) / this.nbImages
+          }deg) translateZ(${distToCenter}px)`)
       );
     });
   }
 
   protected update(): void {
     super.update();
-    this.cube.style.transform = `rotateY(${(this.currentIndex * -360) / this.nbImages}deg)`;
+    this.cube.style.transform = this.isVertical
+      ? `rotateX(${(this.currentIndex * 360) / this.nbImages}deg)`
+      : `rotateY(${(this.currentIndex * -360) / this.nbImages}deg)`;
   }
+
+  private getDistToCenter = (parent: HTMLElement) => {
+    if (this.isVertical) {
+      // height, in pixels, of the focused face
+      const faceHeightPx = (parent.getBoundingClientRect().height * this.focusedElementHeight) / 100;
+      return faceHeightPx / (2 * Math.tan(Math.PI / this.nbImages));
+    }
+    // width, in pixels, of the focused face
+    const faceWidthPx = (parent.getBoundingClientRect().width * this.focusedElementWidth) / 100;
+    return faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
+  };
 }
 
 // declare the new web component to allow constructor instanciation
