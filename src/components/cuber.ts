@@ -25,12 +25,12 @@ export class Cuber extends IndexManager {
       debug = false,
       products,
       parent,
-      perspective = 800,
+      perspective = 6,
       faceLeft = (100 - this.focusedElementHeight) / 2,
       faceRight,
       faceTop = (100 - this.focusedElementHeight) / 2,
       faceBottom,
-      perspectiveOrigin = '50%'
+      perspectiveOrigin = '50% 50%'
     } = props;
 
     this.setAttribute('id', id);
@@ -60,7 +60,6 @@ export class Cuber extends IndexManager {
     container.style.zIndex = '3000000';
     container.style.width = `${this.focusedElementWidth}%`;
     container.style.height = `${this.focusedElementHeight}%`;
-    container.style.perspective = `${perspective}px`;
     container.style.perspectiveOrigin = perspectiveOrigin;
     container.style.alignItems = 'center';
     container.style.pointerEvents = 'none';
@@ -78,6 +77,8 @@ export class Cuber extends IndexManager {
     this.appendChild(container);
 
     let distToCenter = this.getDistToCenter(parent);
+    container.style.perspective = `${perspective * distToCenter}px`;
+
     const zout = document.createElement('div');
     zout.id = 'id-zout';
     zout.style.position = 'relative';
@@ -121,6 +122,7 @@ export class Cuber extends IndexManager {
 
     window.addEventListener('resize', () => {
       distToCenter = this.getDistToCenter(parent);
+      container.style.perspective = `${perspective * distToCenter}px`;
       zout.style.transform = `translateZ(${-distToCenter}px)`;
       this.faces.forEach(
         (face, i) =>
