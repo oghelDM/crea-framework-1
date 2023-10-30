@@ -2,6 +2,7 @@ import { gsap, Power1 } from 'gsap';
 import { getClientXY } from '../utils/helper';
 import { createDiv } from '../utils/divMaker';
 import { ComponentBaseType } from '../types';
+import { defaultComponentValues } from '../types';
 
 export interface IndexManagerType extends ComponentBaseType {
   focusedElementWidth: number; // the width in percent, occupied by the focused element
@@ -9,12 +10,27 @@ export interface IndexManagerType extends ComponentBaseType {
   startIndex?: number;
   onIndexChange?: (index: number) => void; // callback used when the currentIndex is updated
   easing?: gsap.EaseFunction;
-  interactive?: boolean;
+  isInteractive?: boolean;
   autoPlay?: boolean;
   speedCoefficient?: number;
   isVertical?: boolean; // whether the user interaction should be vertical or not
   onClick: (url: string) => void;
 }
+
+export const defaultPropsIndexManager: IndexManagerType = {
+  ...defaultComponentValues,
+  id: 'carouselBasicDM',
+  startIndex: 0,
+  focusedElementWidth: 60,
+  focusedElementHeight: 60,
+  onIndexChange: (_: number) => {},
+  easing: Power1.easeOut,
+  isInteractive: true,
+  autoPlay: true,
+  speedCoefficient: 1,
+  isVertical: false,
+  onClick: () => console.log('click on IndexManager')
+};
 
 export class IndexManager extends HTMLElement {
   mouseXorY: number;
@@ -37,25 +53,30 @@ export class IndexManager extends HTMLElement {
   private autoPlayTimeoutId: number;
   private autoPlayIntervalId: number;
 
-  constructor(
-    {
+  public init(props: IndexManagerType, style: any) {
+    // clean-up previous instance
+    window.clearTimeout(this.autoPlayTimeoutId);
+    window.clearInterval(this.autoPlayIntervalId);
+    while (this.firstChild) {
+      this.removeChild(this.lastChild);
+    }
+
+    const actualProps = { ...defaultPropsIndexManager, ...props };
+    const {
       id,
-      startIndex = 0,
-      onIndexChange = (_: number) => {},
-      easing = Power1.easeOut,
-      interactive = true,
-      speedCoefficient = 1,
-      autoPlay = false,
-      debug = false,
+      startIndex,
+      onIndexChange,
+      easing,
+      speedCoefficient,
+      debug,
       focusedElementWidth,
       focusedElementHeight,
-      isVertical = false,
+      isVertical,
       onClick,
-      redirectUrl
-    }: IndexManagerType,
-    style: any = {}
-  ) {
-    super();
+      redirectUrl,
+      isInteractive,
+      autoPlay
+    } = actualProps;
 
     this.setAttribute('id', id);
     this.previousIndex = startIndex;
@@ -70,13 +91,15 @@ export class IndexManager extends HTMLElement {
     this.onClick = onClick;
     this.redirectUrl = redirectUrl;
 
+    console.log('IM focusedElementWidth: ', focusedElementWidth);
+
     const actualStyle = {
       display: 'block',
       position: 'absolute',
       width: '100%',
       height: '100%',
       opacity: 1,
-      backgroundColor: debug ? '#00ff0088' : 'unset',
+      backgroundColor: debug ? 'rgba(0,0,255,.4)' : 'unset',
       overflow: 'hidden',
 
       ...style
@@ -86,7 +109,7 @@ export class IndexManager extends HTMLElement {
       this.style[key] = value;
     }
 
-    if (interactive) {
+    if (isInteractive) {
       this.setUpPointerEvents(id);
     }
 
@@ -122,8 +145,7 @@ export class IndexManager extends HTMLElement {
       display: 'block',
       position: 'absolute',
       width: '100%',
-      height: '100%',
-      backgroundColor: this.debug ? '#0000ffaa' : 'unset'
+      height: '100%'
     });
     this.appendChild(interactionDiv);
 

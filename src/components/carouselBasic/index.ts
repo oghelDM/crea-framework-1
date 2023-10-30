@@ -1,18 +1,8 @@
-import { createDiv } from '../utils/divMaker';
-import { keepSafe, map } from '../utils/helper';
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
-import { IndexManager, IndexManagerType } from './indexManager';
-
-interface CarouselBasicType extends IndexManagerType {
-  products: string[]; // image elements
-  unfocusedElementWidth?: number; // the width in percent, occupied by the unfocused elements
-  unfocusedElementHeight?: number; // the height in percent, occupied by the unfocused elements
-  focusedElementOpacity?: number; // the focused element's opacity
-  unfocusedElementOpacity?: number; // the unfocused element's opacity
-  gap?: number; // horizontal gap between elements, in percents
-  verticalAlign?: VERTICAL_ALIGN; // vertical alignmenent, top, center or bottom
-  horizontalAlign?: HORIZONTAL_ALIGN; // horizontal alignmenent, left, center or right
-}
+import { IndexManager } from '../indexManager';
+import { createDiv } from '../../utils/divMaker';
+import { keepSafe, map } from '../../utils/helper';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../../types';
+import { CarouselBasicType, defaultValuesCarouselBasic } from './defaultValues';
 
 export class CarouselBasic extends IndexManager {
   products: HTMLElement[];
@@ -25,30 +15,38 @@ export class CarouselBasic extends IndexManager {
   unfocusedElementOpacity: number;
 
   constructor(props: CarouselBasicType, style: any = {}) {
-    super(props, style);
+    super();
 
+    this.init(props, style);
+  }
+
+  public init = (props: CarouselBasicType, style: any = {}) => {
+    const actualProps = { ...defaultValuesCarouselBasic, ...props };
+
+    super.init(actualProps, style);
     const {
       products,
       id,
       gap = 0,
-      verticalAlign = VERTICAL_ALIGN.CENTER,
-      horizontalAlign = HORIZONTAL_ALIGN.CENTER,
+      verticalAlign,
+      horizontalAlign,
       focusedElementWidth,
-      unfocusedElementWidth = focusedElementWidth,
+      unfocusedElementWidth,
       focusedElementHeight,
-      unfocusedElementHeight = focusedElementHeight,
-      focusedElementOpacity = 1,
-      unfocusedElementOpacity = 1
-    } = props;
+      unfocusedElementHeight,
+      focusedElementOpacity,
+      unfocusedElementOpacity
+    } = actualProps;
+
     this.products = products.map((url, index) => {
       const element = createDiv(`${id}-${index}`, {
         width: `${focusedElementWidth}%`,
-        height: '144px',
+        height: `${focusedElementHeight}%`,
         backgroundColor: '#ffffff88',
         position: 'absolute',
         backgroundSize: 'cover',
         backgroundImage: `url(${url})`,
-        border: this.debug ? '1px solid yellow' : 'unset',
+        outline: this.debug ? '1px solid yellow' : 'unset',
         backgroundPosition: 'center',
         /* added to fix webkit bug jitter */
         '-webkit-backface-visibility': 'hidden',
@@ -68,7 +66,7 @@ export class CarouselBasic extends IndexManager {
     this.unfocusedElementOpacity = unfocusedElementOpacity;
 
     this.update();
-  }
+  };
 
   protected update(): void {
     super.update();
