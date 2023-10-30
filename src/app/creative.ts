@@ -9,6 +9,7 @@ import { Defonce } from '../effects/defonce';
 import { Cuber } from '../components/cuber';
 import { CrossFade } from '../components/displacementMaps/crossFade';
 import { FadeIn } from '../components/displacementMaps/fadeIn';
+import { totoNoiseIn } from '../assets/images/toto-noiseIn';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -133,7 +134,8 @@ export class Creative {
         faceBottom: 10,
         onClick: () => console.log('cuber click'),
         parent: root,
-        autoPlay: true
+        autoPlay: true,
+        isVertical: true
       },
       {
         zIndex: 333
@@ -144,7 +146,7 @@ export class Creative {
         // backgroundSize: 'cover'
       }
     );
-    // root.appendChild(cuber);
+    root.appendChild(cuber);
 
     // Defonce effect
     // const defonce = new Defonce({
@@ -154,18 +156,23 @@ export class Creative {
     // });
 
     // DisplacementMap effect
-    const displacementMap = new CrossFade({
+    const displacementMap = new FadeIn({
       parent: root,
       id: 'displacementMapDM',
 
       // 'images/toto-in.png',
       // 'images/toto-noise.png',
       // 'images/IMGP3659.jpg',
-      displacementMapUrl: 'images/toto-in.png',
+      // 'images/toto-noiseIn.png',
+      // 'images/toto-half-x.png',
+      // totoNoiseIn
+      //'https://statics.dmcdn.net/d/TESTS/fwk/assets/toto-noiseIn.png',
+      displacementMapUrl: 'images/toto-adidas.png',
       imageUrl:
         'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      image1Url: 'images/IMGP3659.jpg',
-      // 'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      //'images/IMGP3659.jpg',
+      image1Url:
+        'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       image2Url:
         'https://images.unsplash.com/photo-1697486021635-0d6b5fd69188?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       onClick

@@ -12,7 +12,7 @@ export class FadeIn extends HTMLElement {
   constructor(props: FadeInType, style: any = {}) {
     super();
 
-    const { id, displacementMapUrl, imageUrl, parent, debug } = props;
+    const { id, displacementMapUrl = displacementImage, imageUrl, parent, debug, onClick } = props;
 
     this.setAttribute('id', id);
     const actualStyle = {
@@ -76,6 +76,8 @@ export class FadeIn extends HTMLElement {
     };
 
     updateWarping(0);
+
+    this.addEventListener('click', () => onClick());
   }
 }
 

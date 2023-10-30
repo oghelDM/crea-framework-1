@@ -7,13 +7,14 @@ interface CrossFadeType extends ComponentBaseType {
   displacementMapUrl?: string;
   image1Url?: string;
   image2Url?: string;
+  onClick: (url?: string) => void;
 }
 
 export class CrossFade extends HTMLElement {
   constructor(props: CrossFadeType, style: any = {}) {
     super();
 
-    const { id, displacementMapUrl, parent, debug, image1Url = image1, image2Url = image2 } = props;
+    const { id, displacementMapUrl, parent, debug, image1Url = image1, image2Url = image2, onClick } = props;
 
     this.setAttribute('id', id);
     const actualStyle = {
@@ -84,6 +85,8 @@ export class CrossFade extends HTMLElement {
     };
 
     updateWarping(0);
+
+    this.addEventListener('click', () => onClick());
   }
 }
 
