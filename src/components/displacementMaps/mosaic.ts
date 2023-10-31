@@ -1,17 +1,16 @@
 import { ComponentBaseType } from '../../types';
-import { image, svgContent } from './waterFlowSVG';
+import { image, svgContent } from './mosaicSVG';
 
-interface WaterFlowType extends ComponentBaseType {
+interface MosaicType extends ComponentBaseType {
   imageUrl: string;
-  scale?: number;
-  size?: number; // in percent; make it bigger than 100 to cover the borders black patches
+  size?: number;
 }
 
-export class WaterFlow extends HTMLElement {
-  constructor(props: WaterFlowType, style: any = {}) {
+export class Mosaic extends HTMLElement {
+  constructor(props: MosaicType, style: any = {}) {
     super();
 
-    const { id, imageUrl, scale = 180, size = 100, debug, onClick } = props;
+    const { id, imageUrl, size = 20, debug, onClick } = props;
 
     this.setAttribute('id', id);
     const actualStyle = {
@@ -33,7 +32,7 @@ export class WaterFlow extends HTMLElement {
 
     const svg2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
-    svg2.setAttribute('id', 'svg-water-flow');
+    svg2.setAttribute('id', 'svg-mosaic');
     svg2.setAttribute('data-run', 'paused');
     svg2.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svg2.setAttribute('width', '100%');
@@ -42,12 +41,12 @@ export class WaterFlow extends HTMLElement {
     // svg2.setAttribute('viewBox', '0 0 600 600');
     svg2.innerHTML = svgContent.replace(image, imageUrl);
     svg2.style.position = 'absolute';
-    svg2.style.width = `${size}%`;
-    svg2.style.height = `${size}%`;
-    svg2.style.left = `${(100 - size) / 2}%`;
-    svg2.style.top = `${(100 - size) / 2}%`;
-    const displacementMap = svg2.querySelector('feDisplacementMap') as SVGFEDisplacementMapElement;
-    displacementMap.setAttribute('scale', `${scale}`);
+
+    const composite = svg2.querySelector('feComposite') as SVGFECompositeElement;
+    composite.setAttribute('width', `${size}`);
+    composite.setAttribute('height', `${size}`);
+    const morphology = svg2.querySelector('feMorphology') as SVGFEMorphologyElement;
+    morphology.setAttribute('radius', `${size / 2}`);
 
     this.appendChild(svg2);
 
@@ -56,4 +55,4 @@ export class WaterFlow extends HTMLElement {
 }
 
 // declare the new web component to allow constructor instanciation
-customElements.define('dm-water-flow', WaterFlow);
+customElements.define('dm-mosaic', Mosaic);

@@ -7,8 +7,7 @@ export const svgContent = `
       <feTurbulence
         id="feTurb"
         type="fractalNoise"
-        baseFrequency="0.01
-        0.01"
+        baseFrequency="0.01 0.01"
         seed="7"
         numOctaves="2"
       />
@@ -18,8 +17,9 @@ export const svgContent = `
         dur="40s"
         keyTimes="0;0.5;1"
         values="0.008 0.015;0.015 0.008;0.008 0.015"
-        repeatCount="indefinite"/>
-        <feDisplacementMap
+        repeatCount="indefinite"
+      />
+      <feDisplacementMap
         id="feDisp"
         in="SourceGraphic"
         scale="80"

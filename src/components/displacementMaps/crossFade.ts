@@ -36,9 +36,8 @@ export class CrossFade extends HTMLElement {
 
     const svg2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
-    svg2.setAttribute('id', 'dce-svg-26b54f1');
+    svg2.setAttribute('id', 'svg-cross-fade');
     svg2.setAttribute('data-run', 'paused');
-    svg2.setAttribute('class', 'dce-svg-distortion');
     svg2.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svg2.setAttribute('width', '100%');
     svg2.setAttribute('height', '100%');
