@@ -10,6 +10,7 @@ import { Cuber } from '../components/cuber';
 import { CrossFade } from '../components/displacementMaps/crossFade';
 import { FadeIn } from '../components/displacementMaps/fadeIn';
 import { totoNoiseIn } from '../assets/images/toto-noiseIn';
+import { WaterFlow } from '../components/displacementMaps/waterFlow';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -152,7 +153,16 @@ export class Creative {
     // });
 
     // DisplacementMap effect
-    const displacementMap = new FadeIn({
+    const waterFlow = new WaterFlow({
+      id: 'waterFlowDM',
+      imageUrl:
+        'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      onClick,
+      size: 120,
+      scale: 12
+    });
+    root.appendChild(waterFlow);
+
       parent: root,
       id: 'displacementMapDM',
 

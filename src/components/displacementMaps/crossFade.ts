@@ -52,7 +52,7 @@ export class CrossFade extends HTMLElement {
     svg2.style.width = '100%';
     svg2.style.height = '100%';
     svg2.style.left = '0';
-    svg2.style.right = '0';
+    svg2.style.top = '0';
 
     this.appendChild(svg2);
 
