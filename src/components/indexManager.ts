@@ -136,6 +136,7 @@ export class IndexManager extends HTMLElement {
         fontFamily: 'monospace',
         fontSize: '18px'
       });
+      this.debugCurrentIndexDiv.innerHTML = this.currentIndex.toFixed(2);
       this.appendChild(this.debugCurrentIndexDiv);
     }
   }

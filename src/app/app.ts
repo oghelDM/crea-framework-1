@@ -2,7 +2,8 @@ import { Creative } from './creative';
 import { quartileEvents } from '../constants';
 import { createDiv } from '../utils/divMaker';
 import { mobileCheck, pickVideo, updateDisplay } from '../utils/helper';
-import { Customizer } from '../components/carouselBasic/customizer';
+import { CarouselBasicCustomizer } from '../components/carouselBasic/customizer';
+import { CuberCustomizer } from '../components/cuber/customizer';
 
 (window as any).getVPAIDAd = () => {
   console.log('getVPAIDAd');
@@ -224,7 +225,8 @@ class VPAIDVideoPlayer {
     ///////////////////// DM ad instanciation //////////////////////////
     ////////////////////////////////////////////////////////////////////
     this.creative = new Creative(this.creativeContent, { onClick: (url?: string) => this.clickAd(url) });
-    // this.creative = new Customizer(this.creativeContent);
+    // this.creative = new CarouselBasicCustomizer(this.creativeContent);
+    // this.creative = new CuberCustomizer(this.creativeContent);
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

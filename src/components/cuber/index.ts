@@ -1,15 +1,5 @@
-import { IndexManager, IndexManagerType } from './indexManager';
-
-interface CuberType extends IndexManagerType {
-  products: string[]; // image elements
-  parent: HTMLElement; // the parent DOM element (usually the creative root), necessary to compute the faces dimensions
-  perspective?: number; // 3D perspective
-  faceLeft?: number; // same as the usual css left property for the focused face
-  faceRight?: number; // same as the usual css right property for the focused face
-  faceTop?: number; // same as the usual css top property for the focused face
-  faceBottom?: number; // same as the usual css bottom property for the focused face
-  perspectiveOrigin?: string; // defines the 3d transform origin perspective (eg. '50%' or '0% 50%')
-}
+import { CuberType, defaultValuesCuber } from './defaultValues';
+import { IndexManager } from '../indexManager';
 
 export class Cuber extends IndexManager {
   container: HTMLElement;
@@ -18,20 +8,28 @@ export class Cuber extends IndexManager {
   nbImages: number;
 
   constructor(props: CuberType, style: any = {}) {
-    super(props, style);
+    super();
+
+    this.init(props, style);
+  }
+
+  public init(props, style) {
+    const actualProps = { ...defaultValuesCuber, ...props };
+
+    super.init(actualProps, style);
 
     const {
       id,
       debug = false,
       products,
       parent,
-      perspective = 6,
-      faceLeft = (100 - this.focusedElementHeight) / 2,
+      perspective,
+      faceLeft,
       faceRight,
-      faceTop = (100 - this.focusedElementHeight) / 2,
+      faceTop,
       faceBottom,
-      perspectiveOrigin = '50% 50%'
-    } = props;
+      perspectiveOrigin
+    } = actualProps;
 
     this.setAttribute('id', id);
     const actualStyle = {
@@ -78,6 +76,7 @@ export class Cuber extends IndexManager {
 
     let distToCenter = this.getDistToCenter(parent);
     container.style.perspective = `${perspective * distToCenter}px`;
+    console.log('distToCenter: ', distToCenter);
 
     const zout = document.createElement('div');
     zout.id = 'id-zout';
@@ -121,6 +120,7 @@ export class Cuber extends IndexManager {
     });
 
     window.addEventListener('resize', () => {
+      console.log('resize');
       distToCenter = this.getDistToCenter(parent);
       container.style.perspective = `${perspective * distToCenter}px`;
       zout.style.transform = `translateZ(${-distToCenter}px)`;
@@ -143,11 +143,13 @@ export class Cuber extends IndexManager {
   private getDistToCenter = (parent: HTMLElement) => {
     if (this.isVertical) {
       // height, in pixels, of the focused face
-      const faceHeightPx = (parent.getBoundingClientRect().height * this.focusedElementHeight) / 100;
+      const faceHeightPx =
+        (parent.getBoundingClientRect().height * parseInt(this.style.height) * this.focusedElementHeight) / 100 / 100;
       return faceHeightPx / (2 * Math.tan(Math.PI / this.nbImages));
     }
     // width, in pixels, of the focused face
-    const faceWidthPx = (parent.getBoundingClientRect().width * this.focusedElementWidth) / 100;
+    const faceWidthPx =
+      (parent.getBoundingClientRect().width * parseInt(this.style.width) * this.focusedElementWidth) / 100 / 100;
     return faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
   };
 }

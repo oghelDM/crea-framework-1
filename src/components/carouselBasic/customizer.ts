@@ -3,17 +3,12 @@ import { CarouselBasic } from '.';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../../types';
 import { CarouselBasicType, defaultValuesCarouselBasic } from './defaultValues';
 
-export class Customizer {
+export class CarouselBasicCustomizer {
   private carousel: CarouselBasic;
   props: CarouselBasicType = { ...defaultValuesCarouselBasic };
   styleProps: any = { width: 80, height: 80, left: 10, top: 10 };
 
   constructor(root: HTMLElement) {
-    console.log('customizer cuber: ', root);
-
-    this.carousel = new CarouselBasic(this.props, this.getCssValues());
-    root.appendChild(this.carousel);
-
     const gui = new dat.GUI();
     gui.domElement.id = 'gui';
     const sheet = document.createElement('style');
@@ -30,6 +25,7 @@ export class Customizer {
     );
 
     const folder2 = gui.addFolder('carousel properties');
+    folder2.open();
     folder2
       .add(this.props, 'verticalAlign', {
         top: VERTICAL_ALIGN.TOP,
@@ -50,20 +46,20 @@ export class Customizer {
     ['focusedElementOpacity', 'unfocusedElementOpacity'].forEach((property) =>
       folder2.add(this.props, property, 0, 1).onChange((v) => this.onPropsUpdate(property, v))
     );
-    folder2.open();
     ['debug', 'isVertical', 'isInteractive', 'autoPlay'].forEach((property) =>
       folder2.add(this.props, property).onChange((v) => this.onPropsUpdate(property, v))
     );
     folder2.add(this.props, 'speedCoefficient', 0.1, 10).onChange((v) => this.onPropsUpdate('speedCoefficient', v));
 
-    console.log('toto: ', document.getElementsByClassName('dg main a')[0]);
     (document.getElementsByClassName('dg main a')[0] as HTMLElement).style.width = '400px';
+
+    this.carousel = new CarouselBasic(this.props, this.getCssValues());
+    root.appendChild(this.carousel);
   }
 
   private onPropsUpdate = (property: string, value: any) => {
     this.props[property] = value;
-    this.carousel.init(this.props, this.styleProps);
-    console.log('onPropsUpdate: ', this.props);
+    this.carousel.init(this.props, this.getCssValues());
   };
 
   private onStyleUpdate = (property: string, value: any) => {

@@ -1,21 +1,21 @@
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../../types';
 import { IndexManagerType, defaultPropsIndexManager } from '../indexManager';
 
-export interface CarouselBasicType extends IndexManagerType {
+export interface CuberType extends IndexManagerType {
   products: string[]; // image elements
-  unfocusedElementWidth?: number; // the width in percent, occupied by the unfocused elements
-  unfocusedElementHeight?: number; // the height in percent, occupied by the unfocused elements
-  focusedElementOpacity?: number; // the focused element's opacity
-  unfocusedElementOpacity?: number; // the unfocused element's opacity
-  gap?: number; // horizontal gap between elements, in percents
-  verticalAlign?: VERTICAL_ALIGN; // vertical alignmenent, top, center or bottom
-  horizontalAlign?: HORIZONTAL_ALIGN; // horizontal alignmenent, left, center or right
+  parent: HTMLElement; // the parent DOM element (usually the creative root), necessary to compute the faces dimensions
+  faceLeft?: number; // same as the usual css left property for the focused face
+  faceRight?: number; // same as the usual css right property for the focused face
+  faceTop?: number; // same as the usual css top property for the focused face
+  faceBottom?: number; // same as the usual css bottom property for the focused face
+  perspective?: number; // 3D perspective
+  perspectiveOrigin?: string; // defines the 3d transform origin perspective (eg. '50%' or '0% 50%')
 }
 
-export const defaultValuesCarouselBasic: CarouselBasicType = {
+export const defaultValuesCuber: CuberType = {
   ...defaultPropsIndexManager,
-  id: 'carousel-basic-dm',
-  onClick: () => console.log('click on carousel'),
+  id: 'cuber-dm',
+  onClick: () => console.log('click on cuber'),
 
   products: [
     'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
@@ -24,11 +24,11 @@ export const defaultValuesCarouselBasic: CarouselBasicType = {
     'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
     'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
   ],
-  unfocusedElementWidth: 40,
-  unfocusedElementHeight: 40,
-  focusedElementOpacity: 1,
-  unfocusedElementOpacity: 0.6,
-  gap: 2,
-  horizontalAlign: HORIZONTAL_ALIGN.CENTER,
-  verticalAlign: VERTICAL_ALIGN.CENTER
+  faceLeft: (100 - defaultPropsIndexManager.focusedElementWidth) / 2,
+  faceTop: (100 - defaultPropsIndexManager.focusedElementHeight) / 2,
+  faceRight: undefined,
+  faceBottom: undefined,
+  parent: document.getElementById('appId'),
+  perspective: 6,
+  perspectiveOrigin: '50% 50%'
 };
