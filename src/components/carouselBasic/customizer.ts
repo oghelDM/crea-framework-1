@@ -5,8 +5,8 @@ import { CarouselBasicType, defaultValuesCarouselBasic } from './defaultValues';
 
 export class CarouselBasicCustomizer {
   private carousel: CarouselBasic;
-  props: CarouselBasicType = { ...defaultValuesCarouselBasic };
-  styleProps: any = { width: 80, height: 80, left: 10, top: 10 };
+  private props: CarouselBasicType = { ...defaultValuesCarouselBasic };
+  private styleProps: any = { width: 80, height: 80, left: 10, top: 10 };
 
   constructor(root: HTMLElement) {
     const gui = new dat.GUI();
@@ -18,7 +18,7 @@ export class CarouselBasicCustomizer {
     // gui.remember(this.styleProps);
     // gui.remember(this.props);
 
-    const folder1 = gui.addFolder('css Style');
+    const folder1 = gui.addFolder('component css style');
     folder1.open();
     Object.keys(this.styleProps).forEach((property) =>
       folder1.add(this.styleProps, property, 0, 100).onChange((e) => this.onStyleUpdate(property, e))

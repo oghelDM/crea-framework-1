@@ -144,12 +144,12 @@ export class Cuber extends IndexManager {
     if (this.isVertical) {
       // height, in pixels, of the focused face
       const faceHeightPx =
-        (parent.getBoundingClientRect().height * parseInt(this.style.height) * this.focusedElementHeight) / 100 / 100;
+        (parent.getBoundingClientRect().height * parseFloat(this.style.height) * this.focusedElementHeight) / 100 / 100;
       return faceHeightPx / (2 * Math.tan(Math.PI / this.nbImages));
     }
     // width, in pixels, of the focused face
     const faceWidthPx =
-      (parent.getBoundingClientRect().width * parseInt(this.style.width) * this.focusedElementWidth) / 100 / 100;
+      (parent.getBoundingClientRect().width * parseFloat(this.style.width) * this.focusedElementWidth) / 100 / 100;
     return faceWidthPx / (2 * Math.tan(Math.PI / this.nbImages));
   };
 }
