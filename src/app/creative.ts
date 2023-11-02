@@ -12,6 +12,7 @@ import { FadeIn } from '../components/displacementMaps/fadeIn';
 import { totoNoiseIn } from '../assets/images/toto-noiseIn';
 import { WaterFlow } from '../components/displacementMaps/waterFlow';
 import { Mosaic } from '../components/displacementMaps/mosaic';
+import { map } from '../utils/helper';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -153,47 +154,62 @@ export class Creative {
     //   maskUrl: 'images/chanel.svg'
     // });
 
-    // DisplacementMap effect
-    const waterFlow = new WaterFlow({
-      id: 'waterFlowDM',
-      imageUrl:
-        'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      onClick,
-      size: 120,
-      scale: 12
-    });
-    root.appendChild(waterFlow);
+    // WaterFlow effect
+    // const waterFlow = new WaterFlow({
+    //   id: 'waterFlowDM',
+    //   imageUrl:
+    //     'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    //   onClick,
+    //   size: 120,
+    //   scale: 12
+    // });
+    // root.appendChild(waterFlow);
 
     // Mosaic effect
-    const mosaic = new Mosaic({
-      id: 'mosaicDM',
-      size: 18,
-      imageUrl:
-        'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      onClick
-    });
-    root.appendChild(mosaic);
+    // const mosaic = new Mosaic({
+    //   id: 'mosaicDM',
+    //   size: 18,
+    //   imageUrl:
+    //     'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    //   onClick
+    // });
+    // root.appendChild(mosaic);
 
-      parent: root,
-      id: 'displacementMapDM',
+    // blur test on component?
+    // setTimeout(function () {
+    //   const mosaic = new SafariFilter('cuberDM', 5, 1);
+    // }, 3000);
+    // root.appendChild(mosaic);
 
-      // 'images/toto-in.png',
-      // 'images/toto-noise.png',
-      // 'images/IMGP3659.jpg',
-      // 'images/toto-noiseIn.png',
-      // 'images/toto-half-x.png',
-      // totoNoiseIn
-      //'https://statics.dmcdn.net/d/TESTS/fwk/assets/toto-noiseIn.png',
-      displacementMapUrl: 'images/toto-adidas.png',
-      imageUrl:
-        'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      //'images/IMGP3659.jpg',
-      image1Url:
-        'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      image2Url:
-        'https://images.unsplash.com/photo-1697486021635-0d6b5fd69188?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      onClick
-    });
+    // DisplacementMap effect
+    const displacementMap = new FadeIn(
+      {
+        id: 'displacementMapDM',
+
+        // 'images/toto-in.png',
+        // 'images/toto-noise.png',
+        // 'images/IMGP3659.jpg',
+        // 'images/toto-noiseIn.png',
+        // 'images/toto-half-x.png',
+        // totoNoiseIn
+        //'https://statics.dmcdn.net/d/TESTS/fwk/assets/toto-noiseIn.png',
+        displacementMapUrl: 'images/toto-adidas.png',
+        imageUrl:
+          'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        // image1Url:
+        //   'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        // image2Url:
+        //   'https://images.unsplash.com/photo-1697486021635-0d6b5fd69188?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        onClick
+      },
+      { width: '50%', left: '12%', height: '80%', top: '10%' }
+    );
     root.appendChild(displacementMap);
+
+    window.addEventListener('pointermove', ({ clientX }) => {
+      const scale = map(clientX, 0, window.innerWidth, 200, 0);
+      const zoom = map(clientX, 0, window.innerWidth, 1, 3);
+      displacementMap.update(scale, zoom);
+    });
   }
 }

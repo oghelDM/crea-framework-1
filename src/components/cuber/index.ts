@@ -120,7 +120,6 @@ export class Cuber extends IndexManager {
     });
 
     window.addEventListener('resize', () => {
-      console.log('resize');
       distToCenter = this.getDistToCenter(parent);
       container.style.perspective = `${perspective * distToCenter}px`;
       zout.style.transform = `translateZ(${-distToCenter}px)`;

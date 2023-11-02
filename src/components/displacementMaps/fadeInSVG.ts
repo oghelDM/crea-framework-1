@@ -15,8 +15,8 @@ export const svgContent = `
       color-interpolation-filters="sRGB"
     >
       <feimage
-        xlink:href="${displacementImage}"
         id="displacement-image"
+        href="${displacementImage}"
         x="-8%"
         y="-8%"
         width="74%"
@@ -31,7 +31,6 @@ export const svgContent = `
         yChannelSelector="B"
         in="SourceGraphic"
         in2="distortionImage"
-        result="displacedImage"
         color-interpolation-filters="sRGB"
         scale="219"
       >
@@ -43,6 +42,6 @@ export const svgContent = `
     preserveAspectRatio="xMidYMid slice"
     width="100%"
     height="100%"
-    xlink:href="${image}"
+    href="${image}"
     filter="url(#distortion-filter)"
   ></image>`;
