@@ -38,8 +38,6 @@ export class CuberCustomizer {
     folder2.add(this.perspectiveOrigin, 'perspectiveX', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
     folder2.add(this.perspectiveOrigin, 'perspectiveY', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
 
-    (document.getElementsByClassName('dg main a')[0] as HTMLElement).style.width = '400px';
-
     this.props.parent = root;
     this.cuber = new Cuber(this.props, this.getCssValues());
     root.appendChild(this.cuber);

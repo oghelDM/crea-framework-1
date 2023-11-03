@@ -51,8 +51,6 @@ export class CarouselBasicCustomizer {
     );
     folder2.add(this.props, 'speedCoefficient', 0.1, 10).onChange((v) => this.onPropsUpdate('speedCoefficient', v));
 
-    (document.getElementsByClassName('dg main a')[0] as HTMLElement).style.width = '400px';
-
     this.carousel = new CarouselBasic(this.props, this.getCssValues());
     root.appendChild(this.carousel);
   }
