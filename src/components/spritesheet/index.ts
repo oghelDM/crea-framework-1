@@ -3,6 +3,7 @@ import { SpritesheetType, defaultValuesSpritesheet } from './defaultValues';
 export class Spritesheet extends HTMLElement {
   public framerate: number; // the number of milliseconds each frame is to be displayed
   public isBackwards: boolean; // whether the animation plays backwards
+  public isLoop: boolean; // whether the animation plays backwards
 
   private requestId: number; // requestAnimationFrame id
   private last: number; //the last time the frame was updated
@@ -35,7 +36,8 @@ export class Spritesheet extends HTMLElement {
       spriteSheetUrls,
       nbFramesW,
       isBackwards,
-      isPaused
+      isPaused,
+      isLoop
     } = actualProps;
 
     this.currFrame = startFrame;
@@ -43,6 +45,7 @@ export class Spritesheet extends HTMLElement {
     this.last = Date.now();
     this.framerate = framerate;
     this.isBackwards = isBackwards;
+    this.isLoop = isLoop;
     this.nbFramesW = nbFramesW;
     this.nbFramesH = Math.ceil(nbFrames / nbFramesW);
 
@@ -53,7 +56,7 @@ export class Spritesheet extends HTMLElement {
       height: style.height ? style.height : 'unset',
       aspectRatio: `${frameWidth} / ${frameHeight}`,
       backgroundColor: debug ? '#ff00ff88' : 'unset',
-      backgroundImage: `url(${spriteSheetUrls[0]})`,
+      backgroundImage: `url(${spriteSheetUrls[startFrame]})`,
       backgroundSize: `${this.nbFramesW * 100}%`,
       backgroundPosition: '0 0',
       backgroundRepeat: 'no-repeat',
@@ -85,7 +88,10 @@ export class Spritesheet extends HTMLElement {
   private update = () => {
     this.updateBg();
     const { currFrame, nbFrames, isBackwards } = this;
-    this.currFrame = (currFrame + (isBackwards ? -1 : 1) + nbFrames) % nbFrames;
+    const newFrame = (currFrame + (isBackwards ? -1 : 1) + nbFrames) % nbFrames;
+    if (this.isLoop || Math.abs(newFrame - currFrame) === 1) {
+      this.currFrame = newFrame;
+    }
   };
 
   private updateBg = () => {

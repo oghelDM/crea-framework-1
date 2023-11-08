@@ -1,7 +1,7 @@
 import { ComponentBaseType, defaultComponentValues } from '../../types';
 
 export interface SpritesheetType extends ComponentBaseType {
-  spriteSheetUrls: string[]; // the usrls of the spritesheet(s) to use
+  spriteSheetUrls: string[]; // the url(s) of the spritesheet(s) to use
   frameWidth: number; // the width of each image
   frameHeight: number; // the height of each image
   nbFramesW: number; // number of images in one line of the spritesheet
@@ -10,6 +10,7 @@ export interface SpritesheetType extends ComponentBaseType {
   isPaused?: boolean; // whether the spritesheet is paused at the beginning
   startFrame?: number; // the frame number to start the animation on
   isBackwards?: boolean; // whether the animation plays backwards
+  isLoop?: boolean; // whether the animation loops
 }
 
 export const defaultValuesSpritesheet: SpritesheetType = {
@@ -17,13 +18,14 @@ export const defaultValuesSpritesheet: SpritesheetType = {
   id: 'spritesheet-dm',
   onClick: () => console.log('click on spritesheet'),
 
-  spriteSheetUrls: ['images/bmw.png'],
-  nbFrames: 35,
-  frameWidth: 240,
-  frameHeight: 125,
+  spriteSheetUrls: ['https://statics.dmcdn.net/d/TESTS/components/assets/bmw2.png'],
+  nbFrames: 32,
+  frameWidth: 960,
+  frameHeight: 500,
   nbFramesW: 4,
   framerate: 77,
   isPaused: false,
   startFrame: 0,
-  isBackwards: false
+  isBackwards: false,
+  isLoop: true
 };

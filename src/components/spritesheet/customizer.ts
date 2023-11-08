@@ -36,8 +36,9 @@ export class SpritesheetCustomizer {
       .add(this.props, 'startFrame', 0, this.props.nbFrames - 1)
       .step(1)
       .onChange((v) => this.onPropsUpdate('startFrame', v));
-    folder2.add(this.props, 'isPaused').onChange((v) => this.onPropsUpdate('isPaused', v));
-    folder2.add(this.props, 'isBackwards').onChange((v) => this.onPropsUpdate('isBackwards', v));
+    ['isPaused', 'isBackwards', 'isLoop'].forEach((property) =>
+      folder2.add(this.props, property).onChange((v) => this.onPropsUpdate(property, v))
+    );
 
     const folder3 = gui.addFolder('spritesheet public methods');
     folder3.open();
