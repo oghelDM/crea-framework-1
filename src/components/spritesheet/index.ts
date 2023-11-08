@@ -1,4 +1,4 @@
-import { SpritesheetType, defaultValuesSpritesheet } from './defaultValues';
+import { CANVAS_W, SpritesheetType, defaultValuesSpritesheet } from './defaultValues';
 
 export class Spritesheet extends HTMLElement {
   public framerate: number; // the number of milliseconds each frame is to be displayed
@@ -11,6 +11,7 @@ export class Spritesheet extends HTMLElement {
   private nbFrames: number; // total number of frames
   private nbFramesW: number; // the max number of frames in one line of the spritesheet
   private nbFramesH: number; // the max number of frames in one column of the spritesheet
+  private spriteSheetUrls: string[];
 
   constructor(props: SpritesheetType, style: any = {}) {
     super();
@@ -34,7 +35,6 @@ export class Spritesheet extends HTMLElement {
       framerate,
       nbFrames,
       spriteSheetUrls,
-      nbFramesW,
       isBackwards,
       isPaused,
       isLoop
@@ -46,8 +46,9 @@ export class Spritesheet extends HTMLElement {
     this.framerate = framerate;
     this.isBackwards = isBackwards;
     this.isLoop = isLoop;
-    this.nbFramesW = nbFramesW;
-    this.nbFramesH = Math.ceil(nbFrames / nbFramesW);
+    this.nbFramesW = Math.min(Math.floor(CANVAS_W / frameWidth), nbFrames);
+    this.nbFramesH = Math.min(Math.floor(CANVAS_W / frameHeight), Math.ceil(nbFrames / this.nbFramesW));
+    this.spriteSheetUrls = spriteSheetUrls;
 
     this.setAttribute('id', id);
     const actualStyle = {
@@ -56,7 +57,6 @@ export class Spritesheet extends HTMLElement {
       height: style.height ? style.height : 'unset',
       aspectRatio: `${frameWidth} / ${frameHeight}`,
       backgroundColor: debug ? '#ff00ff88' : 'unset',
-      backgroundImage: `url(${spriteSheetUrls[startFrame]})`,
       backgroundSize: `${this.nbFramesW * 100}%`,
       backgroundPosition: '0 0',
       backgroundRepeat: 'no-repeat',
@@ -70,7 +70,7 @@ export class Spritesheet extends HTMLElement {
 
     this.addEventListener('click', () => onClick(redirectUrl)); // TODO: check it is not triggered several times
 
-    window.cancelAnimationFrame(this.requestId);
+    this.stop();
     if (!isPaused) {
       this.checkUpdate();
     }
@@ -95,19 +95,27 @@ export class Spritesheet extends HTMLElement {
   };
 
   private updateBg = () => {
-    const { currFrame, nbFramesW: nbImagesW, nbFramesH: nbImagesH } = this;
-    const i = currFrame % nbImagesW;
-    const j = Math.floor(currFrame / nbImagesW);
-    this.style.backgroundPosition = `${(i * 100) / (nbImagesW - 1)}% ${(j * 100) / (nbImagesH - 1)}%`;
+    const { currFrame, nbFramesW, nbFramesH } = this;
+    const nbFramesPerSpritesheet = nbFramesW * nbFramesH;
+    const spritesheetIndex = Math.floor(currFrame / nbFramesPerSpritesheet);
+    this.style.backgroundImage = `url(${this.spriteSheetUrls[spritesheetIndex]})`;
+    const i = (currFrame % nbFramesPerSpritesheet) % nbFramesW;
+    const j = Math.floor((currFrame % nbFramesPerSpritesheet) / nbFramesW);
+    this.style.backgroundPosition = `${(i * 100) / (nbFramesW - 1)}% ${(j * 100) / (nbFramesH - 1)}%`;
   };
 
   public start = () => {
-    window.cancelAnimationFrame(this.requestId);
+    if (this.requestId !== undefined) {
+      return; // spritesheet is already playing
+    }
     this.last = undefined; // start right away
     this.checkUpdate();
   };
 
-  public stop = () => window.cancelAnimationFrame(this.requestId);
+  public stop = () => {
+    window.cancelAnimationFrame(this.requestId);
+    this.requestId = undefined;
+  };
 }
 
 // declare the new web component to allow constructor instanciation
