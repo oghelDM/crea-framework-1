@@ -104,14 +104,15 @@ export class Creative {
     //   {
     //     id: 'countdownDM',
     //     debug: true,
-    //     date: 'Oct 31, 2023 09:00:00',
+    //     date: 'Dec 31, 2023 09:00:00',
     //     isOverMessage: 'in your cinemas',
     //     onClick,
-    //     gap: 22,
+    //     elementWidth: '12vi',
+    //     textAlign: HORIZONTAL_ALIGN.RIGHT,
     //     fontUrl:
     //       'https://statics.dmcdn.net/d/PRODUCTION/2023/Entertainement_DisneyPlus_Miraculous_0923_Skins_Split_x_3_and_Countdown/assets/V2/ImpasseBold.ttf'
     //   },
-    //   { left: '3%', width: '70%', bottom: '0%' }
+    //   { left: '3%', width: '70%', bottom: '0%', fontSize: '5vi' }
     // );
     // root.appendChild(countdown);
 
