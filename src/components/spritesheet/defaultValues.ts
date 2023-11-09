@@ -26,7 +26,7 @@ export const defaultValuesSpritesheet: SpritesheetType = {
   nbFrames: 35,
   frameWidth: 509,
   frameHeight: 265,
-  framerate: 77,
+  framerate: 70,
   isPaused: false,
   startFrame: 0,
   isBackwards: false,

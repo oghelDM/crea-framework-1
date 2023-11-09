@@ -1,14 +1,15 @@
 import { gsap, Power1 } from 'gsap';
-import { getClientXY } from '../utils/helper';
-import { createDiv } from '../utils/divMaker';
 import { ComponentBaseType } from '../types';
+import { createDiv } from '../utils/divMaker';
 import { defaultComponentValues } from '../types';
+import { getClientXY, keepSafe } from '../utils/helper';
 
 export interface IndexManagerType extends ComponentBaseType {
   focusedElementWidth: number; // the width in percent, occupied by the focused element
   focusedElementHeight: number; // the height in percent, occupied by the focused element
   startIndex?: number;
   onIndexChange?: (index: number) => void; // callback used when the currentIndex is updated
+  onIndexChanged?: (index: number) => void; // callback used when the currentIndex reaches a new stopping value
   easing?: gsap.EaseFunction;
   isInteractive?: boolean;
   autoPlay?: boolean;
@@ -24,6 +25,7 @@ export const defaultPropsIndexManager: IndexManagerType = {
   focusedElementWidth: 60,
   focusedElementHeight: 60,
   onIndexChange: (_: number) => {},
+  onIndexChanged: (idx: number) => console.log('new index: ', idx),
   easing: Power1.easeOut,
   isInteractive: true,
   autoPlay: true,
@@ -39,6 +41,7 @@ export class IndexManager extends HTMLElement {
   previousIndex: number;
   currentIndex: number;
   onIndexChange: (index: number) => void;
+  onIndexChanged: (index: number) => void;
   easing: gsap.EaseFunction;
   speedCoefficient: number;
   debug: boolean;
@@ -49,6 +52,7 @@ export class IndexManager extends HTMLElement {
   isVertical: boolean;
   onClick: (url: string) => void;
   redirectUrl: string;
+  nbProducts: number = Infinity;
 
   private autoPlayTimeoutId: number;
   private autoPlayIntervalId: number;
@@ -66,6 +70,7 @@ export class IndexManager extends HTMLElement {
       id,
       startIndex,
       onIndexChange,
+      onIndexChanged,
       easing,
       speedCoefficient,
       debug,
@@ -82,6 +87,7 @@ export class IndexManager extends HTMLElement {
     this.previousIndex = startIndex;
     this.currentIndex = startIndex;
     this.onIndexChange = onIndexChange;
+    this.onIndexChanged = onIndexChanged;
     this.easing = easing;
     this.speedCoefficient = speedCoefficient;
     this.debug = debug;
@@ -223,7 +229,8 @@ export class IndexManager extends HTMLElement {
       currentIndex: targetIndex,
       duration,
       ease: this.easing,
-      onUpdate: () => this.update()
+      onUpdate: () => this.update(),
+      onComplete: () => this.onIndexChanged(keepSafe(targetIndex, this.nbProducts))
     });
   };
 

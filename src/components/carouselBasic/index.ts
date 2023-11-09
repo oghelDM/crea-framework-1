@@ -57,6 +57,7 @@ export class CarouselBasic extends IndexManager {
       this.insertBefore(element, this.childNodes[0]);
       return element;
     });
+    this.nbProducts = products.length;
     this.gap = gap;
     this.verticalAlign = verticalAlign;
     this.horizontalAlign = horizontalAlign;
@@ -95,7 +96,7 @@ export class CarouselBasic extends IndexManager {
       const height = map(d, 0, 1, focusedElementHeight, unfocusedElementHeight);
       const opacity = map(d, 0, 1, focusedElementOpacity, unfocusedElementOpacity);
 
-      const iSafe = keepSafe(i, this.products.length);
+      const iSafe = keepSafe(i, this.nbProducts);
       const element = this.products[iSafe];
       element.style.width = `${width}%`;
       element.style.height = `${height}%`;
