@@ -3,7 +3,7 @@ import { Customizer } from '../customizer';
 import { CuberType, defaultValuesCuber } from './defaultValues';
 
 export class CuberCustomizer extends Customizer {
-  private perspectiveOrigin: any = { perspectiveX: 50, perspectiveY: 50 };
+  private otherProps: any = { perspectiveX: 50, perspectiveY: 50, nbFaces: defaultValuesCuber.products.length };
 
   constructor(root: HTMLElement) {
     super(defaultValuesCuber);
@@ -13,6 +13,10 @@ export class CuberCustomizer extends Customizer {
 
     const folder2 = this.gui.addFolder('cuber properties');
     folder2.open();
+    folder2
+      .add(this.otherProps, 'nbFaces', 3, defaultValuesCuber.products.length)
+      .step(1)
+      .onChange((v) => this.onPropsUpdate('products', [...defaultValuesCuber.products].splice(0, v)));
     ['focusedElementWidth', 'focusedElementHeight', 'faceLeft', 'faceTop'].forEach((property) =>
       folder2.add(this.props, property, 0, 100).onChange((v) => this.onPropsUpdate(property, v))
     );
@@ -20,17 +24,20 @@ export class CuberCustomizer extends Customizer {
       folder2.add(this.props, property).onChange((v) => this.onPropsUpdate(property, v))
     );
     folder2.add(this.props, 'perspective', 0.1, 100).onChange((v) => this.onPropsUpdate('perspective', v));
-    folder2.add(this.perspectiveOrigin, 'perspectiveX', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
-    folder2.add(this.perspectiveOrigin, 'perspectiveY', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
+    folder2.add(this.otherProps, 'perspectiveX', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
+    folder2.add(this.otherProps, 'perspectiveY', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
+
+    const folder3 = this.gui.addFolder('cuber methods');
+    folder3.open();
+    folder3.add({ next: () => (this.component as Cuber).moveIndexBy(1) }, 'next');
+    folder3.add({ previous: () => (this.component as Cuber).moveIndexBy(-1) }, 'previous');
 
     this.component = new Cuber(this.props as CuberType, this.getCssValues());
     root.appendChild(this.component);
   }
 
   private onPerspectiveOriginUpdate = () => {
-    (
-      this.props as CuberType
-    ).perspectiveOrigin = `${this.perspectiveOrigin.perspectiveX}% ${this.perspectiveOrigin.perspectiveY}%`;
+    (this.props as CuberType).perspectiveOrigin = `${this.otherProps.perspectiveX}% ${this.otherProps.perspectiveY}%`;
     this.component.init(this.props, this.getCssValues());
   };
 }
