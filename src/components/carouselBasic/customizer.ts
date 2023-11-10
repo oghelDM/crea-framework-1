@@ -1,30 +1,13 @@
-import * as dat from 'dat.gui';
 import { CarouselBasic } from '.';
 import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../../types';
 import { CarouselBasicType, defaultValuesCarouselBasic } from './defaultValues';
+import { Customizer } from '../customizer';
 
-export class CarouselBasicCustomizer {
-  private carousel: CarouselBasic;
-  private props: CarouselBasicType = { ...defaultValuesCarouselBasic };
-  private styleProps: any = { width: 80, height: 80, left: 10, top: 10 };
-
+export class CarouselBasicCustomizer extends Customizer {
   constructor(root: HTMLElement) {
-    const gui = new dat.GUI();
-    gui.domElement.id = 'gui';
-    const sheet = document.createElement('style');
-    sheet.innerHTML = `#gui {width: 400px !important} #appId {width: calc(90% - 400px);  margin-left: 5%}`;
-    document.body.appendChild(sheet);
-    // use localStorage to store values
-    // gui.remember(this.styleProps);
-    // gui.remember(this.props);
+    super(defaultValuesCarouselBasic);
 
-    const folder1 = gui.addFolder('component css style');
-    folder1.open();
-    Object.keys(this.styleProps).forEach((property) =>
-      folder1.add(this.styleProps, property, 0, 100).onChange((e) => this.onStyleUpdate(property, e))
-    );
-
-    const folder2 = gui.addFolder('carousel properties');
+    const folder2 = this.gui.addFolder('carousel properties');
     folder2.open();
     folder2
       .add(this.props, 'verticalAlign', {
@@ -51,25 +34,7 @@ export class CarouselBasicCustomizer {
     );
     folder2.add(this.props, 'speedCoefficient', 0.1, 10).onChange((v) => this.onPropsUpdate('speedCoefficient', v));
 
-    this.carousel = new CarouselBasic(this.props, this.getCssValues());
-    root.appendChild(this.carousel);
+    this.component = new CarouselBasic(this.props as CarouselBasicType, this.getCssValues());
+    root.appendChild(this.component);
   }
-
-  private onPropsUpdate = (property: string, value: any) => {
-    this.props[property] = value;
-    this.carousel.init(this.props, this.getCssValues());
-  };
-
-  private onStyleUpdate = (property: string, value: any) => {
-    this.styleProps[property] = value;
-    this.carousel.init(this.props, this.getCssValues());
-  };
-
-  private getCssValues = () => {
-    const actualStyleProps = {};
-    for (const [key, value] of Object.entries(this.styleProps)) {
-      actualStyleProps[key] = `${value}%`;
-    }
-    return actualStyleProps;
-  };
 }

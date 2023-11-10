@@ -1,13 +1,13 @@
 export enum VERTICAL_ALIGN {
-  TOP = 'TOP',
-  CENTER = 'CENTER',
-  BOTTOM = 'BOTTOM'
+  TOP = 'top',
+  CENTER = 'center',
+  BOTTOM = 'bottom'
 }
 
 export enum HORIZONTAL_ALIGN {
-  LEFT = 'LEFT',
-  CENTER = 'CENTER',
-  RIGHT = 'RIGHT'
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right'
 }
 
 export interface ComponentBaseType {
