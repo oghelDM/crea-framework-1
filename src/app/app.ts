@@ -228,6 +228,7 @@ class VPAIDVideoPlayer {
     // this.creative = new CarouselBasicCustomizer(this.creativeContent);
     // this.creative = new CuberCustomizer(this.creativeContent);
     // this.creative = new SpritesheetCustomizer(this.creativeContent);
+
     this.creative = new Creative(this.creativeContent, { onClick: (url?: string) => this.clickAd(url) });
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

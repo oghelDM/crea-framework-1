@@ -16,6 +16,7 @@ export interface IndexManagerType extends ComponentBaseType {
   speedCoefficient?: number;
   isVertical?: boolean; // whether the user interaction should be vertical or not
   onClick: (url: string) => void;
+  fadeObjects?: HTMLElement[][];
 }
 
 export const defaultPropsIndexManager: IndexManagerType = {
@@ -25,13 +26,14 @@ export const defaultPropsIndexManager: IndexManagerType = {
   focusedElementWidth: 60,
   focusedElementHeight: 60,
   onIndexChange: (_: number) => {},
-  onIndexChanged: (idx: number) => console.log('new index: ', idx),
+  onIndexChanged: (_: number) => {},
   easing: Power1.easeOut,
   isInteractive: true,
   autoPlay: true,
   speedCoefficient: 1,
   isVertical: false,
-  onClick: () => console.log('click on IndexManager')
+  onClick: () => console.log('click on IndexManager'),
+  fadeObjects: []
 };
 
 export class IndexManager extends HTMLElement {
@@ -53,6 +55,7 @@ export class IndexManager extends HTMLElement {
   onClick: (url: string) => void;
   redirectUrl: string;
   nbProducts: number = Infinity;
+  fadeObjects: HTMLElement[][];
 
   private autoPlayTimeoutId: number;
   private autoPlayIntervalId: number;
@@ -80,7 +83,8 @@ export class IndexManager extends HTMLElement {
       onClick,
       redirectUrl,
       isInteractive,
-      autoPlay
+      autoPlay,
+      fadeObjects
     } = actualProps;
 
     this.setAttribute('id', id);
@@ -96,8 +100,7 @@ export class IndexManager extends HTMLElement {
     this.isVertical = isVertical;
     this.onClick = onClick;
     this.redirectUrl = redirectUrl;
-
-    console.log('IM focusedElementWidth: ', focusedElementWidth);
+    this.fadeObjects = fadeObjects;
 
     const actualStyle = {
       display: 'block',
@@ -169,6 +172,16 @@ export class IndexManager extends HTMLElement {
       this.debugCurrentIndexDiv.innerText = this.currentIndex.toFixed(2);
       this.debugElementDiv.style.left = `${-1 * this.currentIndex * this.focusedElementWidth}%`;
     }
+
+    this.fadeObjects.forEach((elements, i) => {
+      const safeIdx = keepSafe(this.currentIndex, this.nbProducts);
+      let d = Math.abs(i - safeIdx);
+      if (d > this.nbProducts / 2) {
+        d = Math.abs(d - this.nbProducts);
+      }
+      const opacity = 1 - Math.min(d, 1);
+      elements?.forEach((element) => (element.style.opacity = `${opacity}`));
+    });
   }
 
   private onMouseDown = (e: PointerEvent): void => {
