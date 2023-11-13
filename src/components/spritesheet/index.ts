@@ -1,4 +1,4 @@
-import { CANVAS_W, SpritesheetType, defaultValuesSpritesheet } from './defaultValues';
+import { SpritesheetType, defaultValuesSpritesheet } from './defaultValues';
 
 export class Spritesheet extends HTMLElement {
   public framerate: number; // the number of milliseconds each frame is to be displayed
@@ -29,8 +29,10 @@ export class Spritesheet extends HTMLElement {
       debug,
       onClick,
       redirectUrl,
-      frameWidth,
-      frameHeight,
+      spriteWidth,
+      spriteHeight,
+      nbFramesW,
+      nbFramesH,
       startFrame,
       framerate,
       nbFrames,
@@ -46,8 +48,8 @@ export class Spritesheet extends HTMLElement {
     this.framerate = framerate;
     this.isBackwards = isBackwards;
     this.isLoop = isLoop;
-    this.nbFramesW = Math.min(Math.floor(CANVAS_W / frameWidth), nbFrames);
-    this.nbFramesH = Math.min(Math.floor(CANVAS_W / frameHeight), Math.ceil(nbFrames / this.nbFramesW));
+    this.nbFramesW = nbFramesW;
+    this.nbFramesH = nbFramesH;
     this.spriteSheetUrls = spriteSheetUrls;
 
     this.setAttribute('id', id);
@@ -55,7 +57,7 @@ export class Spritesheet extends HTMLElement {
       position: 'absolute',
       width: style.width ? style.width : 'unset',
       height: style.height ? style.height : 'unset',
-      aspectRatio: `${frameWidth} / ${frameHeight}`,
+      aspectRatio: `${spriteWidth / nbFramesW} / ${spriteHeight / nbFramesH}`,
       backgroundColor: debug ? '#ff00ff88' : 'unset',
       backgroundSize: `${this.nbFramesW * 100}%`,
       backgroundPosition: '0 0',

@@ -1,12 +1,12 @@
 import { ComponentBaseType, defaultComponentValues } from '../../types';
 
-export const CANVAS_W = 2048; // the maximum width and height of the spritesheet
-
 export interface SpritesheetType extends ComponentBaseType {
   spriteSheetUrls: string[]; // the url(s) of the spritesheet(s) to use
-  frameWidth: number; // the width of each image
-  frameHeight: number; // the height of each image
-  nbFrames: number; // the total number of frames
+  spriteWidth: number; // the width of the spritesheets in pixels
+  spriteHeight: number; // the height of the spritesheets in pixels
+  nbFramesW: number; // the horizontal number of frames per spritesheet
+  nbFramesH: number; // the vertical number of frames per spritesheet
+  nbFrames: number; // the max number of frames in one spritesheet
   framerate?: number; // the number of milliseconds each image is to be displayed
   isPaused?: boolean; // whether the spritesheet is paused at the beginning
   startFrame?: number; // the frame number to start the animation on
@@ -24,8 +24,28 @@ export const defaultValuesSpritesheet: SpritesheetType = {
     'https://statics.dmcdn.net/d/TESTS/components/assets/sprite_bmw_1.png'
   ],
   nbFrames: 35,
-  frameWidth: 509,
-  frameHeight: 265,
+  spriteWidth: 2036,
+  spriteHeight: 1855,
+  nbFramesW: 4,
+  nbFramesH: 7,
+  framerate: 70,
+  isPaused: false,
+  startFrame: 0,
+  isBackwards: false,
+  isLoop: true
+};
+
+export const defaultValuesSpritesheet2: SpritesheetType = {
+  ...defaultComponentValues,
+  id: 'spritesheet-dm-2',
+  onClick: () => console.log('click on spritesheet'),
+
+  spriteSheetUrls: ['https://statics.dmcdn.net/d/TESTS/components/assets/sprite_fire.jpg'],
+  spriteWidth: 800,
+  spriteHeight: 800,
+  nbFramesW: 8,
+  nbFramesH: 8,
+  nbFrames: 64,
   framerate: 70,
   isPaused: false,
   startFrame: 0,

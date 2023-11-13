@@ -11,6 +11,8 @@ export class CuberCustomizer extends Customizer {
     // needed to recalculate the distToCenter value
     this.forceInitOnStyleUpdate = true;
 
+    (this.props as CuberType).parent = root;
+
     const folder2 = this.gui.addFolder('cuber properties');
     folder2.open();
     folder2
