@@ -36,9 +36,8 @@ export const defaultValuesSpritesheet: SpritesheetType = {
 };
 
 export const defaultValuesSpritesheet2: SpritesheetType = {
-  ...defaultComponentValues,
+  ...defaultValuesSpritesheet,
   id: 'spritesheet-dm-2',
-  onClick: () => console.log('click on spritesheet'),
 
   spriteSheetUrls: ['https://statics.dmcdn.net/d/TESTS/components/assets/sprite_fire.jpg'],
   spriteWidth: 800,
@@ -46,9 +45,5 @@ export const defaultValuesSpritesheet2: SpritesheetType = {
   nbFramesW: 8,
   nbFramesH: 8,
   nbFrames: 64,
-  framerate: 70,
-  isPaused: false,
-  startFrame: 0,
-  isBackwards: false,
-  isLoop: true
+  framerate: 70
 };

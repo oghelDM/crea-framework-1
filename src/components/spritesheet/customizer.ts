@@ -1,11 +1,11 @@
 import { Spritesheet } from '.';
 import { Customizer } from '../customizer';
-import { SpritesheetType, defaultValuesSpritesheet2 } from './defaultValues';
+import { SpritesheetType, defaultValuesSpritesheet } from './defaultValues';
 
 export class SpritesheetCustomizer extends Customizer {
   constructor(root: HTMLElement) {
     // remove the height property to not break the component aspect ratio
-    super({ ...defaultValuesSpritesheet2 }, { width: 50, left: 10, top: 10 });
+    super({ ...defaultValuesSpritesheet }, { width: 50, left: 10, top: 10 });
 
     const folder2 = this.gui.addFolder('spritesheet properties');
     folder2.open();

@@ -16,16 +16,22 @@ export class CuberCustomizer extends Customizer {
     const folder2 = this.gui.addFolder('cuber properties');
     folder2.open();
     folder2
-      .add(this.otherProps, 'nbFaces', 3, defaultValuesCuber.products.length)
+      .add(this.otherProps, 'nbFaces', 3, 12)
       .step(1)
-      .onChange((v) => this.onPropsUpdate('products', [...defaultValuesCuber.products].splice(0, v)));
+      .onChange((nbFaces) => {
+        const products = [];
+        for (let i = 0; i < nbFaces; i++) {
+          products.push(defaultValuesCuber.products[i % defaultValuesCuber.products.length]);
+        }
+        this.onPropsUpdate('products', products);
+      });
     ['focusedElementWidth', 'focusedElementHeight', 'faceLeft', 'faceTop'].forEach((property) =>
       folder2.add(this.props, property, 0, 100).onChange((v) => this.onPropsUpdate(property, v))
     );
     ['debug', 'isVertical', 'isInteractive', 'autoPlay'].forEach((property) =>
       folder2.add(this.props, property).onChange((v) => this.onPropsUpdate(property, v))
     );
-    folder2.add(this.props, 'perspective', 0.1, 100).onChange((v) => this.onPropsUpdate('perspective', v));
+    folder2.add(this.props, 'perspective', 0.1, 10).onChange((v) => this.onPropsUpdate('perspective', v));
     folder2.add(this.otherProps, 'perspectiveX', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
     folder2.add(this.otherProps, 'perspectiveY', -200, 200).onChange(() => this.onPerspectiveOriginUpdate());
 

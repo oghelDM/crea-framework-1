@@ -31,7 +31,6 @@ export class Customizer {
     const folder1 = this.gui.addFolder('component css style');
     folder1.open();
 
-    console.log('this.styleProps: ', this.styleProps);
     Object.keys(this.styleProps).forEach((property) =>
       folder1.add(this.styleProps, property, 0, 100).onChange((e) => this.onStyleUpdate(property, e))
     );
