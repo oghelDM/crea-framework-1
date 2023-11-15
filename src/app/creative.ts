@@ -4,7 +4,7 @@ import { ImageDM } from '../components/image';
 import { Countdown } from '../components/Countdown';
 import { IndexManager } from '../components/indexManager';
 import { CarouselBasic } from '../components/carouselBasic';
-import { HORIZONTAL_ALIGN, VERTICAL_ALIGN } from '../types';
+import { HORIZONTAL_ALIGN, VERTICAL_ALIGN, defaultComponentValues } from '../types';
 import { Defonce } from '../effects/defonce';
 import { Cuber } from '../components/cuber';
 import { CrossFade } from '../components/displacementMaps/crossFade';
@@ -16,6 +16,7 @@ import { map } from '../utils/helper';
 import { Spritesheet } from '../components/spritesheet';
 import { defaultValuesSpritesheet } from '../components/spritesheet/defaultValues';
 import { createDiv } from '../utils/divMaker';
+import { Scratch } from '../components/scratch';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -54,53 +55,54 @@ export class Creative {
     // });
     // root.appendChild(idxMgr);
 
-    const products = [
-      'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-      'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-      'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-      'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
-      'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
-    ];
-    const fadeObjects: HTMLElement[][] = products.map((url, i) => {
-      const fadeObject = createDiv(`fadeObject-${i}`, {
-        position: 'absolute',
-        width: '30%',
-        height: '12%',
-        top: '0',
-        right: '0',
-        backgroundImage: `url(${url})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-      });
-      root.appendChild(fadeObject);
-      return [fadeObject];
-    });
+    // const products = [
+    //   'https://images.unsplash.com/photo-1696464795756-2d92a11c504f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxM3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //   'https://images.unsplash.com/photo-1695496573688-3e0e8ac8657e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //   'https://images.unsplash.com/photo-1695456261833-3794ab617deb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Mnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //   'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
+    //   'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
+    // ];
+    // const fadeObjects: HTMLElement[][] = products.map((url, i) => {
+    //   const fadeObject = createDiv(`fadeObject-${i}`, {
+    //     position: 'absolute',
+    //     width: '30%',
+    //     height: '12%',
+    //     top: '0',
+    //     right: '0',
+    //     backgroundImage: `url(${url})`,
+    //     backgroundPosition: 'center',
+    //     backgroundSize: 'cover',
+    //     backgroundRepeat: 'no-repeat'
+    //   });
+    //   root.appendChild(fadeObject);
+    //   return [fadeObject];
+    // });
 
     // CarouselBasic component
-    const carouselBasic = new CarouselBasic(
-      {
-        id: 'carouselBasicDM',
-        products,
-        startIndex: 0,
-        focusedElementWidth: 40,
-        unfocusedElementWidth: 21,
-        focusedElementHeight: 80,
-        unfocusedElementHeight: 61,
-        debug: true,
-        easing: Quad.easeOut,
-        // onIndexChange: (index) => console.log(`creative onIndexChange: ${index}`),
-        autoPlay: true,
-        onClick,
-        gap: 2,
-        horizontalAlign: HORIZONTAL_ALIGN.CENTER,
-        verticalAlign: VERTICAL_ALIGN.CENTER,
-        focusedElementOpacity: 1,
-        unfocusedElementOpacity: 0.6
-        // isVertical: true
-      },
-      { width: '60%', right: '20%' }
-    );
+    // const carouselBasic = new CarouselBasic(
+    //   {
+    //     id: 'carouselBasicDM',
+    //     products,
+    //     startIndex: 0,
+    //     focusedElementWidth: 40,
+    //     unfocusedElementWidth: 21,
+    //     focusedElementHeight: 80,
+    //     unfocusedElementHeight: 61,
+    //     debug: true,
+    //     easing: Quad.easeOut,
+    //     // onIndexChange: (index) => console.log(`creative onIndexChange: ${index}`),
+    //     // autoPlay: true,
+    //     onClick,
+    //     gap: 2,
+    //     horizontalAlign: HORIZONTAL_ALIGN.CENTER,
+    //     verticalAlign: VERTICAL_ALIGN.CENTER,
+    //     focusedElementOpacity: 1,
+    //     unfocusedElementOpacity: 0.6,
+    //     // isVertical: true,
+    //     fadeObjects
+    //   },
+    //   { width: '60%', right: '20%' }
+    // );
     // root.appendChild(carouselBasic);
 
     // Split component
@@ -148,22 +150,24 @@ export class Creative {
     //       'https://plus.unsplash.com/premium_photo-1694670200212-3122e7c5c9b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2NHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60',
     //       'https://images.unsplash.com/photo-1695878026745-1d07d1088045?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw2N3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
     //     ],
+    //     parent: root,
     //     focusedElementWidth: 40,
     //     focusedElementHeight: 80,
     //     faceLeft: 30,
     //     faceBottom: 10,
-    //     onClick: () => console.log('cuber click'),
-    //     parent: root,
-    //     autoPlay: true,
-    //     isVertical: true
+    //     onClick: () => console.log('cuber click')
+    //     // autoPlay: true,
+    //     // isVertical: true
     //   },
     //   {
-    //     zIndex: 333
-    //     // backgroundImage:
-    //     //   'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
-    //     // backgroundPosition: 'center',
-    //     // backgroundRepeat: 'no-repeat',
-    //     // backgroundSize: 'cover'
+    //     zIndex: 333,
+    //     backgroundImage:
+    //       'url(https://statics.dmcdn.net/d/PRODUCTION/2023/Auto_Renault_1023_campaign_Skin_Carousel_interactive/assets/product_1.png)',
+    //     backgroundPosition: 'center',
+    //     backgroundRepeat: 'no-repeat',
+    //     backgroundSize: 'cover',
+    //     width: '80%',
+    //     height: '80%'
     //   }
     // );
     // root.appendChild(cuber);
@@ -203,34 +207,53 @@ export class Creative {
     // root.appendChild(mosaic);
 
     // DisplacementMap effect
-    const displacementMap = new FadeIn(
+    // const displacementMap = new FadeIn(
+    //   {
+    //     id: 'displacementMapDM',
+
+    //     // 'images/toto-in.png',
+    //     // 'images/toto-noise.png',
+    //     // 'images/IMGP3659.jpg',
+    //     // 'images/toto-noiseIn.png',
+    //     // 'images/toto-half-x.png',
+    //     // totoNoiseIn
+    //     //'https://statics.dmcdn.net/d/TESTS/fwk/assets/toto-noiseIn.png',
+    //     displacementMapUrl: 'images/toto-adidas.png',
+    //     imageUrl:
+    //       'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    //     // image1Url:
+    //     //   'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    //     // image2Url:
+    //     //   'https://images.unsplash.com/photo-1697486021635-0d6b5fd69188?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    //     onClick
+    //   },
+    //   { width: '100%', left: '0%', height: '80%', top: '10%' }
+    // );
+    // root.appendChild(displacementMap);
+
+    // Spritesheet component
+    // const spritesheet = new Spritesheet({ ...defaultValuesSpritesheet }, { width: '50%' });
+    // root.appendChild(spritesheet);
+
+    // Scratch component
+    const scratch = new Scratch(
       {
-        id: 'displacementMapDM',
-
-        // 'images/toto-in.png',
-        // 'images/toto-noise.png',
-        // 'images/IMGP3659.jpg',
-        // 'images/toto-noiseIn.png',
-        // 'images/toto-half-x.png',
-        // totoNoiseIn
-        //'https://statics.dmcdn.net/d/TESTS/fwk/assets/toto-noiseIn.png',
-        displacementMapUrl: 'images/toto-adidas.png',
-        imageUrl:
-          'https://images.unsplash.com/photo-1682687982298-c7514a167088?auto=format&amp;fit=crop&amp;q=80&amp;w=2940&amp;ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        // image1Url:
-        //   'https://images.unsplash.com/photo-1682687220866-c856f566f1bd?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        // image2Url:
-        //   'https://images.unsplash.com/photo-1697486021635-0d6b5fd69188?auto=format&fit=crop&q=80&w=2940&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        onClick
+        ...defaultComponentValues,
+        id: 'scratch-dm',
+        cursorUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/target.png',
+        radius: 12,
+        timeoutDuration: 4000,
+        backImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/back_0.jpg',
+        frontImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/front_0.jpg'
       },
-      { width: '50%', left: '12%', height: '80%', top: '10%' }
+      { width: '50%', height: '80%' }
     );
-    root.appendChild(displacementMap);
+    root.appendChild(scratch);
 
-    window.addEventListener('pointermove', ({ clientX }) => {
-      const scale = map(clientX, 0, window.innerWidth, 200, 0);
-      const zoom = map(clientX, 0, window.innerWidth, 1, 3);
-      displacementMap.update(scale, zoom);
-    });
+    // window.addEventListener('pointermove', ({ clientX }) => {
+    //   const scale = map(clientX, 0, window.innerWidth, 200, 0);
+    //   const zoom = map(clientX, 0, window.innerWidth, 1, 3);
+    //   displacementMap.update(scale, zoom);
+    // });
   }
 }

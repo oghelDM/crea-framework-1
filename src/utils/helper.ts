@@ -74,3 +74,37 @@ export const pickVideo = (objectMedias, videoSlot: HTMLVideoElement) => {
 
   return selectedMedia;
 };
+
+// returns the offsets and dimensions of an image that is to fit inside a parent, whether in 'cover' or 'contain' mode
+const fit =
+  (contains: boolean) =>
+  (
+    parentWidth: number,
+    parentHeight: number,
+    childWidth: number,
+    childHeight: number,
+    scale = 1,
+    offsetX = 0.5,
+    offsetY = 0.5
+  ) => {
+    const childRatio: number = childWidth / childHeight;
+    const parentRatio: number = parentWidth / parentHeight;
+    let width: number = parentWidth * scale;
+    let height: number = parentHeight * scale;
+
+    if (contains ? childRatio > parentRatio : childRatio < parentRatio) {
+      height = width / childRatio;
+    } else {
+      width = height * childRatio;
+    }
+
+    return {
+      width,
+      height,
+      offsetX: (parentWidth - width) * offsetX,
+      offsetY: (parentHeight - height) * offsetY
+    };
+  };
+
+export const contain = fit(true);
+export const cover = fit(false);
