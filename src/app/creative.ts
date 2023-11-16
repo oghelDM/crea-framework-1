@@ -241,12 +241,13 @@ export class Creative {
         ...defaultComponentValues,
         id: 'scratch-dm',
         cursorUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/target.png',
-        radius: 12,
         timeoutDuration: 4000,
-        backImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/back_0.jpg',
-        frontImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/front_0.jpg'
+        backImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/back_voda.png',
+        frontImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/front_voda.png',
+        scratchImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/scratch2.png',
+        scratchSizeCoeff: 1
       },
-      { width: '50%', height: '80%' }
+      { width: '100%', height: '100%' }
     );
     root.appendChild(scratch);
 

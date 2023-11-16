@@ -5,7 +5,8 @@ import { cover, getClientXY, map } from '../utils/helper';
 interface ScratchType extends ComponentBaseType {
   backImageUrl: string;
   frontImageUrl: string;
-  radius?: number;
+  scratchImageUrl?: string;
+  scratchSizeCoeff?: number;
   timeoutDuration?: number;
   cursorUrl?: string;
 }
@@ -27,9 +28,10 @@ export class Scratch extends HTMLElement {
       redirectUrl,
       backImageUrl,
       frontImageUrl,
-      radius = 20,
+      scratchImageUrl,
       timeoutDuration,
-      cursorUrl
+      cursorUrl,
+      scratchSizeCoeff = 1
     } = props;
 
     this.setAttribute('id', id);
@@ -69,6 +71,12 @@ export class Scratch extends HTMLElement {
       };
     }
 
+    let imgScratch;
+    if (scratchImageUrl) {
+      imgScratch = new Image();
+      imgScratch.src = scratchImageUrl;
+    }
+
     this.appendChild(this.canvas);
 
     this.addEventListener('click', () => onClick(redirectUrl));
@@ -85,9 +93,27 @@ export class Scratch extends HTMLElement {
         const { x, y } = getClientXY(e, boundingClientRect);
         const xxx = map(x, 0, width, 0, this.canvas.width) + cursorOffset.x;
         const yyy = map(y, 0, height, 0, this.canvas.height) + cursorOffset.y;
-        this.context.beginPath();
-        this.context.ellipse(xxx, yyy, radius, radius, 0, 0, 2 * Math.PI);
-        this.context.fill();
+        if (scratchImageUrl && imgScratch.complete) {
+          const { naturalWidth, naturalHeight } = imgScratch;
+          // default size is 10% of the smallest component dimension
+          const sizeCoeff =
+            (scratchSizeCoeff * 0.1 * Math.min(this.canvas.width, this.canvas.height)) /
+            Math.max(naturalWidth, naturalHeight);
+          const scratchImageWidth = naturalWidth * sizeCoeff;
+          const scratchImageHeight = naturalHeight * sizeCoeff;
+          this.context.save();
+          this.context.translate(xxx, yyy);
+          this.context.rotate(Math.random() * Math.PI * 2);
+          this.context.translate(-scratchImageWidth / 2, -scratchImageHeight / 2);
+          this.context.drawImage(imgScratch, 0, 0, scratchImageWidth, scratchImageHeight);
+          this.context.restore();
+        } else {
+          // default diameter is 10% of the smallest component dimension
+          const radius = (scratchSizeCoeff * 0.1 * Math.min(this.canvas.width, this.canvas.height)) / 2;
+          this.context.beginPath();
+          this.context.ellipse(xxx, yyy, radius, radius, 0, 0, 2 * Math.PI);
+          this.context.fill();
+        }
 
         if (!this.hasUserInteracted && timeoutDuration) {
           this.hasUserInteracted = true;
