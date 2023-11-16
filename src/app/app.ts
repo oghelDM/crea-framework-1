@@ -5,6 +5,7 @@ import { mobileCheck, pickVideo, updateDisplay } from '../utils/helper';
 import { CarouselBasicCustomizer } from '../components/carouselBasic/customizer';
 import { CuberCustomizer } from '../components/cuber/customizer';
 import { SpritesheetCustomizer } from '../components/spritesheet/customizer';
+import { ScratchCustomizer } from '../components/scratch/customizer';
 
 (window as any).getVPAIDAd = () => {
   console.log('getVPAIDAd');
@@ -228,6 +229,7 @@ class VPAIDVideoPlayer {
     // this.creative = new CarouselBasicCustomizer(this.creativeContent);
     // this.creative = new CuberCustomizer(this.creativeContent);
     // this.creative = new SpritesheetCustomizer(this.creativeContent);
+    // this.creative = new ScratchCustomizer(this.creativeContent);
 
     this.creative = new Creative(this.creativeContent, { onClick: (url?: string) => this.clickAd(url) });
     ////////////////////////////////////////////////////////////////////

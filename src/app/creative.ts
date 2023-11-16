@@ -17,6 +17,7 @@ import { Spritesheet } from '../components/spritesheet';
 import { defaultValuesSpritesheet } from '../components/spritesheet/defaultValues';
 import { createDiv } from '../utils/divMaker';
 import { Scratch } from '../components/scratch';
+import { defaultValuesScratch } from '../components/scratch/defaultValues';
 
 interface CreativeProps {
   onClick: (url?: string) => void;
@@ -236,19 +237,7 @@ export class Creative {
     // root.appendChild(spritesheet);
 
     // Scratch component
-    const scratch = new Scratch(
-      {
-        ...defaultComponentValues,
-        id: 'scratch-dm',
-        cursorUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/target.png',
-        timeoutDuration: 4000,
-        backImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/back_voda.png',
-        frontImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/front_voda.png',
-        scratchImageUrl: 'https://statics.dmcdn.net/d/TESTS/components/scratch/scratch2.png',
-        scratchSizeCoeff: 1
-      },
-      { width: '100%', height: '100%' }
-    );
+    const scratch = new Scratch({ ...defaultValuesScratch }, { width: '100%', height: '100%' });
     root.appendChild(scratch);
 
     // window.addEventListener('pointermove', ({ clientX }) => {
