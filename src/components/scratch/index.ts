@@ -1,21 +1,14 @@
 import gsap from 'gsap';
 import { ComponentBaseType } from '../../types';
 import { cover, getClientXY, map } from '../../utils/helper';
-
-interface ScratchType extends ComponentBaseType {
-  backImageUrl: string;
-  frontImageUrl: string;
-  scratchImageUrl?: string;
-  scratchSizeCoeff?: number;
-  timeoutDuration?: number;
-  cursorUrl?: string;
-}
+import { ScratchType } from './defaultValues';
 
 export class Scratch extends HTMLElement {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
   private hasUserInteracted: boolean = false;
   private isReadyToDraw: boolean = false;
+  private cursorAutoRotate: boolean;
   private frontImageUrl: string;
   private scratchImageUrl: string;
   private cursorOffset = { x: 0, y: 0 };
@@ -56,7 +49,15 @@ export class Scratch extends HTMLElement {
   }
 
   public init = (props: ScratchType, style: any = {}) => {
-    const { debug, frontImageUrl, scratchImageUrl, timeoutDuration, cursorUrl, scratchSizeCoeff = 1 } = props;
+    const {
+      debug,
+      frontImageUrl,
+      scratchImageUrl,
+      timeoutDuration,
+      cursorUrl,
+      scratchSizeCoeff = 1,
+      cursorAutoRotate = true
+    } = props;
 
     const actualStyle = {
       position: 'absolute',
@@ -79,6 +80,7 @@ export class Scratch extends HTMLElement {
     this.scratchImageUrl = scratchImageUrl;
     this.hasUserInteracted = false;
     this.timeoutDuration = timeoutDuration;
+    this.cursorAutoRotate = cursorAutoRotate;
     this.scratchSizeCoeff = scratchSizeCoeff;
 
     if (cursorUrl) {
@@ -120,6 +122,7 @@ export class Scratch extends HTMLElement {
         width: imageWidth,
         height: imageHeight
       } = cover(this.canvas.width, this.canvas.height, imgFront.naturalWidth, imgFront.naturalHeight);
+      this.context.globalCompositeOperation = 'source-over';
       this.context.drawImage(imgFront, offsetX, offsetY, imageWidth, imageHeight);
       this.isReadyToDraw = true;
       // from now on, any drawing on the canvas is punch-through
@@ -147,7 +150,9 @@ export class Scratch extends HTMLElement {
       const scratchImageHeight = naturalHeight * sizeCoeff;
       this.context.save();
       this.context.translate(xxx, yyy);
-      this.context.rotate(Math.random() * Math.PI * 2);
+      if (this.cursorAutoRotate) {
+        this.context.rotate(Math.random() * Math.PI * 2);
+      }
       this.context.translate(-scratchImageWidth / 2, -scratchImageHeight / 2);
       this.context.drawImage(this.imgScratch, 0, 0, scratchImageWidth, scratchImageHeight);
       this.context.restore();

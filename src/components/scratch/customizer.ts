@@ -26,16 +26,29 @@ export class ScratchCustomizer extends Customizer {
         this.onPropsUpdate('scratchSizeCoeff', v);
         (this.component as Scratch).onMounted();
       });
+    folder2.add(this.props, 'cursorAutoRotate').onChange((v) => {
+      this.onPropsUpdate('cursorAutoRotate', v);
+    });
 
-    // const folder3 = this.gui.addFolder('spritesheet public methods');
-    // folder3.open();
-    // folder3.add({ start: () => (this.component as Scratch).start() }, 'start');
-    // folder3.add({ stop: () => (this.component as Scratch).stop() }, 'stop');
-    // folder3.add({ init: () => this.component.init(this.props, this.getCssValues()) }, 'init');
+    const folder3 = this.gui.addFolder('images');
+    folder3.open();
+    folder3.add({ scratchImage: () => this.uploadFile('scratchImageUrl') }, 'scratchImage');
+    folder3.add({ cursorImage: () => this.uploadFile('cursorUrl') }, 'cursorImage');
 
     this.component = new Scratch(this.props as ScratchType, this.getCssValues());
     root.appendChild(this.component);
   }
+
+  uploadFile = (propertyName) => {
+    const input = document.createElement('input');
+    input.setAttribute('id', 'image-file');
+    input.setAttribute('type', 'file');
+    input.onchange = () => {
+      const imageUrl = window.webkitURL.createObjectURL(input.files[0]);
+      this.onPropsUpdate(propertyName, imageUrl);
+    };
+    input.click();
+  };
 
   protected onStyleUpdate(property: string, value: any) {
     super.onStyleUpdate(property, value);
