@@ -17,14 +17,12 @@ export class ScratchCustomizer extends Customizer {
       .step(1)
       .onChange((v) => {
         this.onPropsUpdate('timeoutDuration', v);
-        (this.component as Scratch).onMounted();
       });
     folder2
       .add(this.props, 'scratchSizeCoeff', 0, 10)
       .step(0.01)
       .onChange((v) => {
         this.onPropsUpdate('scratchSizeCoeff', v);
-        (this.component as Scratch).onMounted();
       });
     folder2.add(this.props, 'cursorAutoRotate').onChange((v) => {
       this.onPropsUpdate('cursorAutoRotate', v);
@@ -52,6 +50,5 @@ export class ScratchCustomizer extends Customizer {
 
   protected onStyleUpdate(property: string, value: any) {
     super.onStyleUpdate(property, value);
-    (this.component as Scratch).onMounted();
   }
 }
