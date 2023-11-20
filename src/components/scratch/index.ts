@@ -23,7 +23,7 @@ export class Scratch extends HTMLElement {
     this.props = { ...defaultValuesScratch, ...props };
     this.styleProps = { ...styleProps };
 
-    const { id, onClick, redirectUrl } = this.props;
+    const { id, onClick, redirectUrl, frontImageUrl } = this.props;
 
     this.setAttribute('id', id);
 
@@ -37,7 +37,7 @@ export class Scratch extends HTMLElement {
     this.context = this.canvas.getContext('2d');
 
     this.imgFront = new Image();
-    this.imgFront.src = this.props.frontImageUrl;
+    this.imgFront.src = frontImageUrl;
 
     this.addEventListener('pointermove', (e) => this.pointerMove(e));
     this.addEventListener('click', () => onClick(redirectUrl));
@@ -51,12 +51,12 @@ export class Scratch extends HTMLElement {
     });
   }
 
-  public init = (props: ScratchType, style: any = {}) => {
-    this.props = { ...this.props, ...props };
+  public init = (props?: ScratchType, styleProps?: any) => {
+    this.props = { ...this.props, ...(props || {}) };
 
     const { debug, scratchImageUrl, backImageUrl, cursorUrl } = this.props;
 
-    const actualStyle = {
+    this.styleProps = {
       position: 'absolute',
       width: '100%',
       height: '100%',
@@ -66,10 +66,10 @@ export class Scratch extends HTMLElement {
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
 
-      ...style
+      ...(styleProps || {})
     };
 
-    for (const [key, value] of Object.entries(actualStyle)) {
+    for (const [key, value] of Object.entries(this.styleProps)) {
       this.style[key] = value;
     }
 
@@ -121,7 +121,7 @@ export class Scratch extends HTMLElement {
 
   // called when the HTMLElement is added to the document
   connectedCallback() {
-    this.init(this.props, this.styleProps);
+    this.init();
   }
 
   private pointerMove = (e) => {
