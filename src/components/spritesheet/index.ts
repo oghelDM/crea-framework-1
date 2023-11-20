@@ -10,11 +10,11 @@ export class Spritesheet extends HTMLElement {
   constructor(props: SpritesheetType, styleProps: any = {}) {
     super();
 
-    this.init(props, styleProps);
+    this.init({ ...defaultValuesSpritesheet, ...props }, styleProps);
   }
 
   public init(props: SpritesheetType, styleProps: any) {
-    this.props = { ...defaultValuesSpritesheet, ...props };
+    this.props = { ...this.props, ...props };
 
     const { id, debug, onClick, redirectUrl, spriteWidth, spriteHeight, nbFramesW, nbFramesH, startFrame, isPaused } =
       this.props;

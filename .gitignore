@@ -8,5 +8,4 @@ dist/
 # Packages folders
 node_modules/
 
-
-build/
+build/*.js

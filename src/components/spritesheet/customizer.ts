@@ -12,7 +12,7 @@ export class SpritesheetCustomizer extends Customizer {
     folder2
       .add(this.props, 'framerate', 1, 500)
       .step(1)
-      .onChange((v) => ((this.component as Spritesheet).framerate = v));
+      .onChange((v) => this.onPropsUpdate('framerate', v));
     folder2
       .add(this.props, 'startFrame', 0, (this.props as SpritesheetType).nbFrames - 1)
       .step(1)
